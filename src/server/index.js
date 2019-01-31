@@ -93,48 +93,19 @@ app.post('/hotel-monitor', function(req,res){
         }
     })
 
-    connection.end()
-});
-
-app.post('/hotel-monitor-dummy', function(req,res){
-    
-    var deviceid = req.body.deviceid;
-    var humidity = req.body.humidity;
-    var celsius = req.body.celsius;
-    var fahrenheit = req.body.fahrenheit;
-    var ismove = req.body.ismove;
-    var distance = req.body.distance;
-    var day = req.body.day;
-    var month = req.body.month;
-    var year = req.body.year;
-    var hour = req.body.hour;
-    var minute = req.body.minute;
-    var createddate=req.body.createddate;
-    var parameters=[deviceid,humidity,celsius,fahrenheit,ismove,distance,day,month,year,hour,minute,createddate];
-   
-  
-    var connection = mysql.createConnection({
-        host: dbhost,
-        user: dbuser,
-        password: dbpassword,
-        database: dbschema
-    });
-
-    connection.connect()
-
-    connection.query('insert into job(deviceid,humidity,celsius,fahrenheit,ismove,distance,day,month,year,hour,minute,createddate)'+
-    ' values(?,?,?,?,?,?,?,?,?,?,?,?)',parameters, function (err, rows, fields) {
+    connection.query('update device set updateddate=now() where id=? ',deviceid, function (err, rows, fields) {
         if (err){
             console.log("ERROR:"+err.message);
             res.send("ERROR:"+err.message);
         } else{
-            console.log('SUCCESS: deviceid='+deviceid + ', minute=' + minute + ', createddate=' + createddate);
-            res.send('SUCCESS');
+            console.log('UPDATE SUCCESS: deviceid='+deviceid + ' date='+ date.format(new Date(), 'YYYY-MM-DD HH:mm:ss'));
+            
         }
     })
 
+
     connection.end()
 });
-
+ 
 app.listen(8080, () => console.log("Listening on port 8080!"));
 
