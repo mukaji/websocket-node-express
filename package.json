@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "repository": "git@github.com:mukaji/websocket-node-express.git",
+  "author": "mukaji",
   "scripts": { 
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot --progress ",
     "server": "nodemon src/server/index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
-  "author": "",
+  "engines": {
+    "node": "11.8.0"
+  }, 
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
