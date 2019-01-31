@@ -1,0 +1,9 @@
+{
+    "domain": "www.nodict.com",
+    "mysql": {
+      "dbhost": "localhost",
+      "dbuser": "hoteluser",
+      "dbpassword": "1qaz2wsx",
+      "dbschema": "hotel"
+    }
+  }
