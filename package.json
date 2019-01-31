@@ -5,20 +5,21 @@
   "main": "index.js",
   "repository": "git@github.com:mukaji/websocket-node-express.git",
   "author": "mukaji",
-  "scripts": { 
+  "scripts": {
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot --progress ",
     "server": "nodemon src/server/index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "engines": {
     "node": "11.8.0"
-  }, 
+  },
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
     "config.json": "0.0.4",
     "date-and-time": "^0.6.3",
     "express": "^4.16.4",
+    "hashmap": "^2.3.0",
     "mysql": "^2.16.0",
     "nodemon": "^1.18.9",
     "ws": "^6.1.3"

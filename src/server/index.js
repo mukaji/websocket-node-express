@@ -1,16 +1,17 @@
 const express = require('express');
 const app = express();  
 var mysql = require('mysql')
-let date = require('date-and-time');
+let date = require('date-and-time'); 
 var fs = require('fs'); 
 var configPath = './config.json';
 var parsed = JSON.parse(fs.readFileSync(configPath, 'UTF-8'));
 exports.storageConfig=  parsed;
-
+ 
 const dbhost=exports.storageConfig.mysql.dbhost;
 const dbuser=exports.storageConfig.mysql.dbuser;
 const dbpassword=exports.storageConfig.mysql.dbpassword;
 const dbschema=exports.storageConfig.mysql.dbschema;
+ 
 
 app.use(express.static("dist"));
 var bodyParser = require('body-parser');
@@ -23,7 +24,7 @@ app.get('/', (req, res) => {
 
 /* Get hotel data by memberid */
 app.get('/hotel-getstatus', function (req, res) {
-     
+      
     var memberid = req.body.memberid;
     var startdate=req.body.startdate;
     var enddate=req.body.enddate;
@@ -62,15 +63,58 @@ app.get('/hotel-getstatus', function (req, res) {
 });
 
 /* Insert data into hotel */
-app.post('/hotel-monitor', function(req,res){
+app.post('/hotel-monitor', function(req,res){ 
+
+    getActiveDevice(function(err,isActive){
+        console.log("isActive="+isActive);
+        if(isActive==false){
+            res.send("BLOCK"); 
+        }else{
+            /* insert data */
+            insertData(req,res);
+        }
+    },req.body.deviceid);
+  
+});
+ 
+app.listen(8080, () => console.log("Listening on port 8080!"));
+
+/* FUNCTION */
+
+/* check device is active or not */
+var  getActiveDevice = function(callback,deviceid) {
+    var isActive=false;
+    var connection = mysql.createConnection({
+        host: dbhost,
+        user: dbuser,
+        password: dbpassword,
+        database: dbschema
+    });
     
-    var deviceid = req.body.deviceid;
+    connection.connect()  
+    connection.query("select id from device where disabled=0 and id=? ",deviceid, function (err, res) {
+        if (err){
+            console.log("ERROR:"+err.message); 
+        } else{    
+             if(res.length==0){
+                isActive=false;
+             }else{
+                isActive=true;
+             }
+        }
+        callback(null, isActive);
+    });  
+    connection.end()
+}
+
+/* insert data from device to database */
+function insertData(req,res){
+    var deviceid = req.body.deviceid; 
     var humidity = req.body.humidity;
     var celsius = req.body.celsius;
     var fahrenheit = req.body.fahrenheit;
     var ismove = req.body.ismove;
-    var distance = req.body.distance;
-  
+    var distance = req.body.distance; 
     var parameters=[deviceid,humidity,celsius,fahrenheit,ismove,distance];
     
     var connection = mysql.createConnection({
@@ -78,10 +122,10 @@ app.post('/hotel-monitor', function(req,res){
         user: dbuser,
         password: dbpassword,
         database: dbschema
-    });
-
+    }); 
     connection.connect()
 
+    /* insert into table job */
     connection.query('insert into job(deviceid,humidity,celsius,fahrenheit,ismove,distance,day,month,year,hour,minute,sec,createddate)'+
     ' values(?,?,?,?,?,?,day(now()),month(now()),year(now()),hour(now()),minute(now()),second(now()),now())',parameters, function (err, rows, fields) {
         if (err){
@@ -93,7 +137,8 @@ app.post('/hotel-monitor', function(req,res){
         }
     })
 
-    connection.query('update device set updateddate=now() where id=? ',deviceid, function (err, rows, fields) {
+    /* insert into table device */
+    connection.query('update device set updateddate=now() where id=? and disabled=0 ',deviceid, function (err, rows, fields) {
         if (err){
             console.log("ERROR:"+err.message);
             res.send("ERROR:"+err.message);
@@ -102,10 +147,6 @@ app.post('/hotel-monitor', function(req,res){
             
         }
     })
-
-
     connection.end()
-});
+}
  
-app.listen(8080, () => console.log("Listening on port 8080!"));
-
