@@ -1,1 +1,2 @@
-node src/server/index.js
+pkill -f node
+nohup node src/server/index.js &
