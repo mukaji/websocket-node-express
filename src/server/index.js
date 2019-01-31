@@ -17,6 +17,9 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
   
+app.get('/', (req, res) => {
+    res.send('Hi!');
+});
 
 /* Get hotel data by memberid */
 app.get('/hotel-getstatus', function (req, res) {
@@ -79,8 +82,8 @@ app.post('/hotel-monitor', function(req,res){
 
     connection.connect()
 
-    connection.query('insert into job(deviceid,humidity,celsius,fahrenheit,ismove,distance,day,month,year,hour,minute,createddate)'+
-    ' values(?,?,?,?,?,?,day(now()),month(now()),year(now()),hour(now()),minute(now()),now())',parameters, function (err, rows, fields) {
+    connection.query('insert into job(deviceid,humidity,celsius,fahrenheit,ismove,distance,day,month,year,hour,minute,sec,createddate)'+
+    ' values(?,?,?,?,?,?,day(now()),month(now()),year(now()),hour(now()),minute(now()),second(now()),now())',parameters, function (err, rows, fields) {
         if (err){
             console.log("ERROR:"+err.message);
             res.send("ERROR:"+err.message);
