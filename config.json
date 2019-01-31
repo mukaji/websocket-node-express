@@ -1,5 +1,4 @@
 {
-    "domain": "www.nodict.com",
     "mysql": {
       "dbhost": "localhost",
       "dbuser": "hoteluser",
