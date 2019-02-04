@@ -113,7 +113,7 @@ function insertData(req,res){
     var celsius = req.body.celsius;
     var ismove = req.body.ismove;
     var light = req.body.light; 
-    var parameters=[deviceid,celsius,ismove];
+    var parameters=[deviceid,celsius,ismove,light];
     
     var connection = mysql.createConnection({
         host: dbhost,
