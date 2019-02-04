@@ -109,13 +109,11 @@ var  getActiveDevice = function(callback,deviceid) {
 
 /* insert data from device to database */
 function insertData(req,res){
-    var deviceid = req.body.deviceid; 
-    var humidity = req.body.humidity;
+    var deviceid = req.body.deviceid;
     var celsius = req.body.celsius;
-    var fahrenheit = req.body.fahrenheit;
     var ismove = req.body.ismove;
-    var distance = req.body.distance; 
-    var parameters=[deviceid,humidity,celsius,fahrenheit,ismove,distance];
+    var light = req.body.light; 
+    var parameters=[deviceid,celsius,ismove];
     
     var connection = mysql.createConnection({
         host: dbhost,
@@ -126,13 +124,13 @@ function insertData(req,res){
     connection.connect()
 
     /* insert into table job */
-    connection.query('insert into job(deviceid,humidity,celsius,fahrenheit,ismove,distance,day,month,year,hour,minute,sec,createddate)'+
-    ' values(?,?,?,?,?,?,day(now()),month(now()),year(now()),hour(now()),minute(now()),second(now()),now())',parameters, function (err, rows, fields) {
+    connection.query('insert into job(deviceid,celsius,ismove,light,day,month,year,hour,minute,sec,createddate)'+
+    ' values(?,?,?,?,day(now()),month(now()),year(now()),hour(now()),minute(now()),second(now()),now())',parameters, function (err, rows, fields) {
         if (err){
             console.log("ERROR:"+err.message);
             res.send("ERROR:"+err.message);
         } else{
-            console.log('SUCCESS: deviceid='+deviceid + ', humidity=' + humidity + ', celsius=' + celsius+', fahrenheit='+fahrenheit+', ismove='+ismove+', distance='+distance+', date='+ date.format(new Date(), 'YYYY-MM-DD HH:mm:ss'));
+            console.log('SUCCESS: deviceid='+deviceid + ', celsius=' + celsius+', ismove='+ismove+', light='+light+', date='+ date.format(new Date(), 'YYYY-MM-DD HH:mm:ss'));
             res.send('SUCCESS');
         }
     })
