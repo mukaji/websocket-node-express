@@ -1,12 +1,16 @@
 const express = require('express');
 const app = express();  
-var mysql = require('mysql')
+
 let date = require('date-and-time'); 
+ 
+var temp = require("./getTemperature");
+
+/* db configuration */
+var mysql = require('mysql')
 var fs = require('fs'); 
 var configPath = './config.json';
 var parsed = JSON.parse(fs.readFileSync(configPath, 'UTF-8'));
 exports.storageConfig=  parsed;
- 
 const dbhost=exports.storageConfig.mysql.dbhost;
 const dbuser=exports.storageConfig.mysql.dbuser;
 const dbpassword=exports.storageConfig.mysql.dbpassword;
@@ -77,7 +81,12 @@ app.post('/hotel-monitor', function(req,res){
   
 });
  
-app.listen(8080, () => console.log("Listening on port 8080!"));
+app.listen(8080, () => startUp());
+
+function startUp() {
+    console.log("Listening on port 8080!");
+    temp.updateTemp();
+}
 
 /* FUNCTION */
 
