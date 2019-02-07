@@ -17,6 +17,8 @@ const dbuser=exports.storageConfig.mysql.dbuser;
 const dbpassword=exports.storageConfig.mysql.dbpassword;
 const dbschema=exports.storageConfig.mysql.dbschema;
  
+const jsonToTable = require('json-to-table');
+var json2html = require('node-json2html');
 
 app.use(express.static("dist"));
 var bodyParser = require('body-parser');
@@ -24,7 +26,7 @@ app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
   
 app.get('/', (req, res) => {
-    res.send('Hi!');
+    res.send('');
 });
 
 app.get('/show', function (req, res) {
@@ -43,9 +45,12 @@ app.get('/show', function (req, res) {
         if (err){
             console.log("ERROR:"+err.message);
             res.send("ERROR:"+err.message);
-        } else{ 
-            console.log('results: ', results)
-            res.send(results);
+        } else{   
+            var transform = {"<>":"div","html":"${id} | ${celsius} | ${ismove} | ${light} | ${hour}| ${tambontemp}"};
+        
+            var html = json2html.transform(results,transform);
+            html="id | celsius| ismove | light | hour | tambontemp<br/>"+html;
+            res.send(html);
         }
     })
 

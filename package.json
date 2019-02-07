@@ -23,10 +23,12 @@
     "express": "^4.16.4",
     "hashmap": "^2.3.0",
     "json": "^9.0.6",
+    "json-to-table": "^4.1.0",
     "mysql": "^2.16.0",
     "node-fetch": "^2.3.0",
+    "node-json2html": "^1.2.0",
     "nodemon": "^1.18.9",
-    "request": "^2.88.0",  
+    "request": "^2.88.0",
     "threads": "^0.12.1",
     "ws": "^6.1.3"
   },
