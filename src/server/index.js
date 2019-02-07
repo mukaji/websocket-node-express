@@ -16,8 +16,7 @@ const dbhost=exports.storageConfig.mysql.dbhost;
 const dbuser=exports.storageConfig.mysql.dbuser;
 const dbpassword=exports.storageConfig.mysql.dbpassword;
 const dbschema=exports.storageConfig.mysql.dbschema;
- 
-const jsonToTable = require('json-to-table');
+  
 var json2html = require('node-json2html');
 
 app.use(express.static("dist"));
