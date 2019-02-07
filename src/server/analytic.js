@@ -78,6 +78,8 @@ async function doEachRows(rows) {
             if (light == "light" || light == "bright" || light == "very bright" || light == "white") {
                 /* if night time and there is light that mean there is human */
                 islight = 1;
+            }else{
+                islight = 0;
             }
         } else {
             islight = 0;
