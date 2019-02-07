@@ -4,6 +4,7 @@ const app = express();
 let date = require('date-and-time'); 
  
 var temp = require("./getTemperature");
+var analytic = require("./analytic");
 
 /* db configuration */
 var mysql = require('mysql')
@@ -85,7 +86,10 @@ app.listen(8080, () => startUp());
 
 function startUp() {
     console.log("Listening on port 8080!");
+    /* start get temperature from open api */
     temp.updateTemp();
+    /* start analytic room usage */
+    analytic.analyticJob();
 }
 
 /* FUNCTION */

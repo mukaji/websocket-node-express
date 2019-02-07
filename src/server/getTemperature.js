@@ -9,14 +9,10 @@ const dbhost = exports.storageConfig.mysql.dbhost;
 const dbuser = exports.storageConfig.mysql.dbuser;
 const dbpassword = exports.storageConfig.mysql.dbpassword;
 const dbschema = exports.storageConfig.mysql.dbschema;
-
-/* sleep */
-//var sleep = require('system-sleep');
-
+ 
 /* api.openweathermap.org */
 var APPID = "0953fe3e5d129978eb1e08e2fca99f76";
 const request = require('request');
-
 
 module.exports = {
 
