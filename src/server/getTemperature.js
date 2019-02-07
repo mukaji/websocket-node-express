@@ -41,8 +41,7 @@ async function updateTempPerAmphoe() {
             //var sql='select distinct t.id,t.tambon,t.lat,t.lon,t.temperature,t.updateddate from tambon t';
             connection.query(sql, function (err, rows) {
                 if (err) {
-                    console.log("ERROR:" + err.message);
-                    res.send("ERROR:" + err.message);
+                    console.log("ERROR:" + err.message); 
                 } else {
                     /* for each tambon update temperature */ 
                     doEachRows(rows);
@@ -133,8 +132,7 @@ function updateTempDB(id, temperature, tambon) {
     /* update temperature */
     connection.query('update tambon set temperature=?, updateddate=now() where id=?  ', parameters, function (err, rows, fields) {
         if (err) {
-            console.log("ERROR:" + err.message);
-            res.send("ERROR:" + err.message);
+            console.log("ERROR:" + err.message); 
         } else {
             console.log("UPDATE SUCCESS TEMP id=" + id + " tambon=" + tambon + " temp=" + temperature);
         }

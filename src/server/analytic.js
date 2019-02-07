@@ -32,8 +32,7 @@ async function analyticJobProcess() {
  
             connection.query(sql, function (err, rows) {
                 if (err) {
-                    console.log("ERROR:" + err.message);
-                    res.send("ERROR:" + err.message);
+                    console.log("ERROR:" + err.message); 
                 } else {
                     /* for each row for analytic use room */
                     doEachRows(rows);
