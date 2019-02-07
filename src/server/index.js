@@ -27,6 +27,31 @@ app.get('/', (req, res) => {
     res.send('Hi!');
 });
 
+app.get('/show', function (req, res) {
+        
+    var connection = mysql.createConnection({
+        host: dbhost,
+        user: dbuser,
+        password: dbpassword,
+        database: dbschema
+    });
+
+    connection.connect()
+
+    var sql='select id,celsius,ismove,light,hour,isair,ishuman,islight,tambontemp from job order by id desc limit 0,20  '; 
+    connection.query(sql, function (err, results) {
+        if (err){
+            console.log("ERROR:"+err.message);
+            res.send("ERROR:"+err.message);
+        } else{ 
+            console.log('results: ', results)
+            res.send(results);
+        }
+    })
+
+    connection.end()
+});
+
 /* Get hotel data by memberid */
 app.get('/hotel-getstatus', function (req, res) {
       
