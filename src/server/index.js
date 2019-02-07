@@ -46,8 +46,8 @@ app.get('/show', function (req, res) {
             console.log("ERROR:"+err.message);
             res.send("ERROR:"+err.message);
         } else{   
+            // json to table
             var transform = {"<>":"div","html":"${id} | ${celsius} | ${ismove} | ${light} | ${hour}| ${tambontemp}"};
-        
             var html = json2html.transform(results,transform);
             html="id | celsius| ismove | light | hour | tambontemp<br/>"+html;
             res.send(html);
