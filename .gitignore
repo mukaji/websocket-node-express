@@ -5,3 +5,4 @@ node_modules/
 .vscode
 .*.yml
 *-lock.json
+*.out
