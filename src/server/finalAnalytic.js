@@ -53,27 +53,32 @@ const delay = (amount = number) => {
 }
 
 async function doEachRows(rows) {
-    var id, ishuman, isair, islight;
+    var id, ishuman, isair, islight, percent;
     var used = 0;
-    var index=0;
+    var index = 0, score = 0;
     for (let i = 0; i < rows.length; i++) {
         used = 0;
         id = rows[i].id;
         ishuman = rows[i].ishuman;
         isair = rows[i].isair;
         islight = rows[i].islight;
-        if (ishuman !=null && ishuman == 1) {
+        if (ishuman != null && ishuman == 1) {
             used = 1;
-        } else if (islight !=null && islight == 1) {
+        } else if (islight != null && islight == 1) {
             used = 1;
-        } else if (isair!=null && isair == 1) {
+        } else if (isair != null && isair == 1) {
             used = 1;
         }
-        console.log("id="+id+" ishuman="+ishuman+" islight="+islight+" isair="+isair+" used="+used);
+        if (ishuman == 1) score++;
+        if (islight == 1) score++;
+        if (isair == 1) score++;
+         
+        percent = (score * 100) / 3;
+        console.log("id=" + id + " ishuman=" + ishuman + " islight=" + islight + " isair=" + isair + " used=" + used+" percent="+percent);
         //update used
-        updateUsed(id, used); 
-        if(index>=50){
-            index=0;
+        updateUsed(id, used,percent);
+        if (index >= 50) {
+            index = 0;
             await delay(3000);
         }
         index++;
@@ -82,8 +87,8 @@ async function doEachRows(rows) {
 }
 
 
-async function updateUsed(id, used) {
-    var parameters = [used, id];
+async function updateUsed(id, used,percent) {
+    var parameters = [used,percent, id];
     var connection = mysql.createConnection({
         host: dbhost,
         user: dbuser,
@@ -93,7 +98,7 @@ async function updateUsed(id, used) {
 
     connection.connect()
     /* update used */
-    connection.query('update job set used=? where id=?  ', parameters, function (err, rows, fields) {
+    connection.query('update job set used=?,percentused=? where id=?  ', parameters, function (err, rows, fields) {
         if (err) {
             console.log("ERROR updateUsed:" + err.message);
 
