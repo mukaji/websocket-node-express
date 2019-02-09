@@ -5,6 +5,7 @@ let date = require('date-and-time');
  
 var temp = require("./getTemperature");
 var analytic = require("./analytic");
+var finalAnalytic = require("./finalAnalytic");
 
 /* db configuration */
 var mysql = require('mysql')
@@ -118,6 +119,8 @@ function startUp() {
     temp.updateTemp();
     /* start analytic room usage */
     analytic.analyticJob();
+    /* start final Analytic */
+    finalAnalytic.finalAnalytic();
 }
 
 /* FUNCTION */
