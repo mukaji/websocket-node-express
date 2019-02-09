@@ -123,107 +123,171 @@ function updateDataDB(id, ishuman, islight, outsideTemp) {
     connection.end()
 }
 
+
 async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
     if (deviceid == undefined) return;
-    var check10Minutes = false;
-    //if (celsius >= 30) {
-    //    /* if temp more than 30 -> noair */
-    //    //set isair=0, delete btemp
-    //    setNoAir(id, 0,deviceid);
-    //    console.log("TEMP >=30 -> NOAIR");
-    //} else {
-    //    /* check day/night */
-    //    /* day=8-17 , night=18-7 */
-    //    if (hour >= 8 && hour <= 18) {
-    //        /* day */
-    //        if (celsius <= outsideTemp - 3) {
-    //            //set isair=1, btemp=current temp
-    //            setIsAir(id, 1, celsius,deviceid);
-    //            console.log("DAY && TEMP <= TTEMP-3 -> AIR");
-    //        } else {
-    //            check10Minutes = true;
-    //            console.log("DAY && TEMP > TTEMP-3 -> CHECK 10 MINUTES");
-    //        }
-    //    } else {
-    //        /* night */
-    //        check10Minutes = true;
-    //        console.log("NIGHT: -> CHECK 10 MINUTES");
-    //    }
+    // get 10 minutes before
+    var connection = mysql.createConnection({
+        host: dbhost,
+        user: dbuser,
+        password: dbpassword,
+        database: dbschema
+    });
+    connection.connect()
 
+    var sql = "select  distinct TIMESTAMPDIFF(HOUR,b.createddate,j.createddate) hourdiff ,b.btemp ,j.* ";
+    sql += " from job j  left outer join btemp b on b.deviceid=j.deviceid ";
+    sql += " where j.deviceid=?  ";
+    sql += " and  j.createddate >= NOW() - INTERVAL 10 MINUTE ";
+    sql += " order by j.id desc ";
 
-    check10Minutes = true;
-    /*#### START: check 10 minutes ago ####*/
-    if (check10Minutes == true) {
-        var connection = mysql.createConnection({
-            host: dbhost,
-            user: dbuser,
-            password: dbpassword,
-            database: dbschema
-        });
-        connection.connect()
-
-        var sql = "select  distinct TIMESTAMPDIFF(HOUR,b.createddate,j.createddate) hourdiff ,b.btemp ,j.* ";
-        sql += " from job j  left outer join btemp b on b.deviceid=j.deviceid ";
-        sql += " where j.deviceid=?  ";
-        sql += " and  j.createddate >= NOW() - INTERVAL 10 MINUTE ";
-        sql += " order by j.id desc ";
-
-        connection.query(sql, deviceid, function (err, results) {
-            if (err) {
-                console.log("ERROR Get10Minutes:" + err.message);
-            } else {
-                //get first
-                var sTemp, eTemp, diff, hourdiff, bTemp;
-                if (results.length != 0) {
-                    sTemp = results[0].celsius;
-                    eTemp = results[results.length - 1].celsius;
-                    diff = eTemp - sTemp;
-                    console.log("id=" + id + " STEMP=" + sTemp + " ETEMP=" + eTemp + " DIFF=" + diff);
-                    if (diff <= -1) {
-                        /* temp decrease more then -1 celsius -> isair=1 */
-                        setIsAir(id, 1, sTemp, deviceid);
-                        console.log("DIFF <= -1 -> AIR");
-                    } else if (diff >= 1) {
-                        /* temp increase more then 1 celsius then check more */
-                        hourdiff = results[0].hourdiff;
-                        bTemp = results[0].btemp;
-                        if (hourdiff==null || (hourdiff <= 1 && bTemp != null)) {
-                            /* if btemp is not older than 1 hour */
-                            if (celsius >= bTemp - 1) {
-                                /* if current temp >= previousTemp-1 -> noair */
-                                setNoAir(id, 0, deviceid);
-
-                                console.log("id=" + id + " HOURDIFF <=1 && TEMP=> BTEMP-1 (" + celsius + "=>" + bTemp - 1 + ") -> NOAIR");
-                            } else {
-                                //nothing
-                                console.log("id=" + id + " HOURDIFF > 1 (HOURDIFF=" + HOURDIFF + ") bTemp=" + bTemp);
-                                console.log("id=" + id + " NOTHING");
-                            }
-                        } else {
-                            /* if btemp is older than 1 hour then check with tambon-temp */
-                            if (celsius >= outsideTemp - 2) {
-                                /* if current temp >= outsideTemp-2 -> noair */
-                                setNoAir(id, 0, deviceid);
-                                console.log("id=" + id + " HOURDIFF>1 && TEMP>=TTEMP-2 (" + celsius + ">=" + outsideTemp - 2 + ") -> NOAIR");
-                            } else {
-                                //nothing
-                                console.log("id=" + id + " TEMP < outsideTemp - 2 (" + celsius + "<" + outsideTemp - 2 + ")");
-                                console.log("id=" + id + " NOTHING");
-                            }
+    connection.query(sql, deviceid, function (err, results) {
+        if (err) {
+            console.log("ERROR Get10Minutes:" + err.message);
+        } else {
+            //get first
+            var sTemp, eTemp, diff, hourdiff, bTemp;
+            if (results.length != 0) {
+                sTemp = results[0].celsius;
+                eTemp = results[results.length - 1].celsius;
+                diff = eTemp - sTemp;
+                console.log("id=" + id + " STEMP=" + sTemp + " ETEMP=" + eTemp + " DIFF=" + diff);
+                if (diff <= -1) {
+                    /* temp decrease more then -1 celsius -> isair=1 */
+                    setIsAir(id, 1, sTemp, deviceid);
+                    console.log("DIFF <= -1 -> AIR");
+                } else if (diff >= 1) {
+                    /* temp increase more then 1 celsius then check more */
+                    hourdiff = results[0].hourdiff;
+                    bTemp = results[0].btemp;
+                    setNoAir(id, 0, deviceid);
+                    console.log("DIFF >= 1 -> NOAIR");
+                } else {
+                    //temp doesn't change
+                    //get previous record
+                    if (results.length >= 1) {
+                        var previousIsAir = results[1].isair;
+                        if (previousIsAir != null) {
+                            //update isair=previousIsAir
+                            setIsAirByPrevious(id, previousIsAir);
+                            console.log("id="+id+" PREVIOUS = "+previousIsAir);
+                        }else{
+                            console.log("id="+id+" PREVIOUS is null");
                         }
-                    } else {
-                        //nothing change
-                        console.log("id=" + id + " diff < 1 (" + diff + " < 1)");
-                        console.log("id=" + id + " NOTHING");
+                    }else{
+                        console.log("id="+id+" results.length <1 (results.length="+results.length+")");
                     }
                 }
+            }else{
+                console.log("id="+id+" results.length=0");
             }
-        })
+        }
 
-        connection.end()
-        /*#### END: check 10 minutes ago ####*/
+    })
+    connection.end()
+}
+
+async function analyticAir_bak(id, celsius, outsideTemp, hour, deviceid) {
+    if (deviceid == undefined) return;
+    var check10Minutes = false;
+    if (celsius >= 30) {
+        /* if temp more than 30 -> noair */
+        //set isair=0, delete btemp
+        setNoAir(id, 0, deviceid);
+        console.log("TEMP >=30 -> NOAIR");
+    } else {
+        /* check day/night */
+        /* day=8-17 , night=18-7 */
+        if (hour >= 8 && hour <= 18) {
+            /* day */
+            if (celsius <= outsideTemp - 3) {
+                //set isair=1, btemp=current temp
+                setIsAir(id, 1, celsius, deviceid);
+                console.log("DAY && TEMP <= TTEMP-3 -> AIR");
+            } else {
+                check10Minutes = true;
+                console.log("DAY && TEMP > TTEMP-3 -> CHECK 10 MINUTES");
+            }
+        } else {
+            /* night */
+            check10Minutes = true;
+            console.log("NIGHT: -> CHECK 10 MINUTES");
+        }
+
+
+        check10Minutes = true;
+        /*#### START: check 10 minutes ago ####*/
+        if (check10Minutes == true) {
+            var connection = mysql.createConnection({
+                host: dbhost,
+                user: dbuser,
+                password: dbpassword,
+                database: dbschema
+            });
+            connection.connect()
+
+            var sql = "select  distinct TIMESTAMPDIFF(HOUR,b.createddate,j.createddate) hourdiff ,b.btemp ,j.* ";
+            sql += " from job j  left outer join btemp b on b.deviceid=j.deviceid ";
+            sql += " where j.deviceid=?  ";
+            sql += " and  j.createddate >= NOW() - INTERVAL 10 MINUTE ";
+            sql += " order by j.id desc ";
+
+            connection.query(sql, deviceid, function (err, results) {
+                if (err) {
+                    console.log("ERROR Get10Minutes:" + err.message);
+                } else {
+                    //get first
+                    var sTemp, eTemp, diff, hourdiff, bTemp;
+                    if (results.length != 0) {
+                        sTemp = results[0].celsius;
+                        eTemp = results[results.length - 1].celsius;
+                        diff = eTemp - sTemp;
+                        console.log("id=" + id + " STEMP=" + sTemp + " ETEMP=" + eTemp + " DIFF=" + diff);
+                        if (diff <= -1) {
+                            /* temp decrease more then -1 celsius -> isair=1 */
+                            setIsAir(id, 1, sTemp, deviceid);
+                            console.log("DIFF <= -1 -> AIR");
+                        } else if (diff >= 1) {
+                            /* temp increase more then 1 celsius then check more */
+                            hourdiff = results[0].hourdiff;
+                            bTemp = results[0].btemp;
+                            if (hourdiff == null || (hourdiff <= 1 && bTemp != null)) {
+                                /* if btemp is not older than 1 hour */
+                                if (celsius >= bTemp - 1) {
+                                    /* if current temp >= previousTemp-1 -> noair */
+                                    setNoAir(id, 0, deviceid);
+
+                                    console.log("id=" + id + " HOURDIFF <=1 && TEMP=> BTEMP-1 (" + celsius + "=>" + bTemp - 1 + ") -> NOAIR");
+                                } else {
+                                    //nothing
+                                    console.log("id=" + id + " HOURDIFF > 1 (HOURDIFF=" + HOURDIFF + ") bTemp=" + bTemp);
+                                    console.log("id=" + id + " NOTHING");
+                                }
+                            } else {
+                                /* if btemp is older than 1 hour then check with tambon-temp */
+                                if (celsius >= outsideTemp - 2) {
+                                    /* if current temp >= outsideTemp-2 -> noair */
+                                    setNoAir(id, 0, deviceid);
+                                    console.log("id=" + id + " HOURDIFF>1 && TEMP>=TTEMP-2 (" + celsius + ">=" + outsideTemp - 2 + ") -> NOAIR");
+                                } else {
+                                    //nothing
+                                    console.log("id=" + id + " TEMP < outsideTemp - 2 (" + celsius + "<" + outsideTemp - 2 + ")");
+                                    console.log("id=" + id + " NOTHING");
+                                }
+                            }
+                        } else {
+                            //nothing change
+                            console.log("id=" + id + " diff < 1 (" + diff + " < 1) Temp does not change");
+                            console.log("id=" + id + " NOTHING");
+                        }
+                    }
+                }
+            })
+
+            connection.end()
+            /*#### END: check 10 minutes ago ####*/
+        }
     }
-    //}
 }
 
 
@@ -298,6 +362,29 @@ function setNoAir(id, isair, deviceid) {
             console.log("ERROR DeleteBTemp:" + err.message);
         } else {
             //console.log("DELETE BTemp deviceid=" + deviceid);
+        }
+    })
+    connection.end()
+}
+
+/* set isair = previous isair */
+function setIsAirByPrevious(id, isair) {
+    var parameters = [isair, id];
+
+    var connection = mysql.createConnection({
+        host: dbhost,
+        user: dbuser,
+        password: dbpassword,
+        database: dbschema
+    });
+
+    connection.connect()
+    /* update isair=previous isair */
+    connection.query('update job set isair=? where id=?  ', parameters, function (err, rows, fields) {
+        if (err) {
+            console.log("ERROR UpdateJobIsAir=0:" + err.message);
+        } else {
+            console.log("UPDATE SUCCESS JOB-ISAIR-PRE id=" + id + " isair=" + isair);
         }
     })
     connection.end()
