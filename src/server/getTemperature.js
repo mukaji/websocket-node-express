@@ -134,7 +134,7 @@ function updateTempDB(id, temperature, tambon) {
         if (err) {
             console.log("ERROR:" + err.message); 
         } else {
-            console.log("UPDATE SUCCESS TEMP id=" + id + " tambon=" + tambon + " temp=" + temperature);
+            //console.log("UPDATE SUCCESS TEMP id=" + id + " tambon=" + tambon + " temp=" + temperature);
         }
     })
     connection.end()
