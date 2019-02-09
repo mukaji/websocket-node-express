@@ -69,6 +69,7 @@ async function doEachRows(rows) {
         } else if (isair!=null && isair == 1) {
             used = 1;
         }
+        console.log("id="+id+" ishuman="+ishuman+" islight="+islight+" isair="+isair+" used="+used);
         //update used
         updateUsed(id, used); 
         if(index>=50){
@@ -97,7 +98,7 @@ async function updateUsed(id, used) {
             console.log("ERROR updateUsed:" + err.message);
 
         } else {
-            console.log("UPDATE SUCCESS USED id=" + id + " used=" + used);
+            //console.log("UPDATE SUCCESS USED id=" + id + " used=" + used);
         }
     })
     connection.end()
