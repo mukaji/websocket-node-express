@@ -41,7 +41,7 @@ async function updateTempPerAmphoe() {
             //var sql='select distinct t.id,t.tambon,t.lat,t.lon,t.temperature,t.updateddate from tambon t';
             connection.query(sql, function (err, rows) {
                 if (err) {
-                    console.log("ERROR:" + err.message); 
+                    console.log("ERROR SelectTambon:" + err.message); 
                 } else {
                     /* for each tambon update temperature */ 
                     doEachRows(rows);
@@ -51,7 +51,7 @@ async function updateTempPerAmphoe() {
             connection.end()
 
         } catch (error) {
-            console.log("ERROR:" + error.message);
+            console.log("ERROR LoopUpdateTambonTemp:" + error.message);
         } finally { 
             await delay(60000);//sleep 1 minute   
         }
@@ -108,7 +108,7 @@ function initialize(sUrl, id, tambon) {
         // Do async job
         request.get(options, function (err, resp, body) {
             if (err) {
-                console.log("ERROR");
+                console.log("ERROR GetAPI");
                 reject(err);
             } else {
                 var outputs = [id, tambon, JSON.parse(body)];
@@ -132,7 +132,7 @@ function updateTempDB(id, temperature, tambon) {
     /* update temperature */
     connection.query('update tambon set temperature=?, updateddate=now() where id=?  ', parameters, function (err, rows, fields) {
         if (err) {
-            console.log("ERROR:" + err.message); 
+            console.log("ERROR UpdateTambonTemp:" + err.message); 
         } else {
             //console.log("UPDATE SUCCESS TEMP id=" + id + " tambon=" + tambon + " temp=" + temperature);
         }

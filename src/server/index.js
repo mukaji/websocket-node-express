@@ -168,7 +168,7 @@ function insertData(req,res){
     connection.query('insert into job(deviceid,celsius,ismove,light,day,month,year,hour,minute,sec,createddate)'+
     ' values(?,?,?,?,day(now()),month(now()),year(now()),hour(now()),minute(now()),second(now()),now())',parameters, function (err, rows, fields) {
         if (err){
-            console.log("ERROR:"+err.message);
+            console.log("ERROR InsertJob:"+err.message);
             res.send("ERROR:"+err.message);
         } else{
             //console.log('SUCCESS: deviceid='+deviceid + ', celsius=' + celsius+', ismove='+ismove+', light='+light+', date='+ date.format(new Date(), 'YYYY-MM-DD HH:mm:ss'));
@@ -179,7 +179,7 @@ function insertData(req,res){
     /* insert into table device */
     connection.query('update device set updateddate=now() where id=? and disabled=0 ',deviceid, function (err, rows, fields) {
         if (err){
-            console.log("ERROR:"+err.message);
+            console.log("ERROR UpdateDeviceUpdateddate:"+err.message);
             res.send("ERROR:"+err.message);
         } else{
            // console.log('UPDATE SUCCESS: deviceid='+deviceid + ' date='+ date.format(new Date(), 'YYYY-MM-DD HH:mm:ss'));

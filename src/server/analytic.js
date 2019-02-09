@@ -228,6 +228,8 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
 
 /* set when isair=1 */
 function setIsAir(id, isair, bTemp,deviceid) {
+    var parameters1=[isair,id];
+
     var connection = mysql.createConnection({
         host: dbhost,
         user: dbuser,
@@ -237,7 +239,7 @@ function setIsAir(id, isair, bTemp,deviceid) {
 
     connection.connect()
     /* update isair=1 */
-    connection.query('update job set isair=? where id=?  ', id, function (err, rows, fields) {
+    connection.query('update job set isair=? where id=?  ', parameters1, function (err, rows, fields) {
         if (err) {
             console.log("ERROR UpdateJobIsAir=1:" + err.message);
         } else {
@@ -271,6 +273,8 @@ function setIsAir(id, isair, bTemp,deviceid) {
 
 /* set when isair=0 */
 function setNoAir(id, isair,deviceid) {
+    var parameters=[isair,id];
+
     var connection = mysql.createConnection({
         host: dbhost,
         user: dbuser,
@@ -280,7 +284,7 @@ function setNoAir(id, isair,deviceid) {
 
     connection.connect()
     /* update isair=0 */
-    connection.query('update job set isair=? where id=?  ', id, function (err, rows, fields) {
+    connection.query('update job set isair=? where id=?  ', parameters, function (err, rows, fields) {
         if (err) {
             console.log("ERROR UpdateJobIsAir=0:" + err.message);
         } else {
