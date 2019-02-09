@@ -26,7 +26,7 @@ async function finalAnalyticProcess() {
             });
             connection.connect()
 
-            var sql = ' select * from job where used is null';
+            var sql = ' select * from job where used is null and ishuman is not null and islight is not null';
             connection.query(sql, function (err, rows) {
                 if (err) {
                     console.log("ERROR finalAnalyticProcess:" + err.message);
