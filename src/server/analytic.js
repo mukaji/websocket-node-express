@@ -288,7 +288,7 @@ function setNoAir(id, isair,deviceid) {
         if (err) {
             console.log("ERROR UpdateJobIsAir=0:" + err.message);
         } else {
-            console.log("UPDATE SUCCESS JOB-ISAIR-1 id=" + id + " isair=" + isair);
+            console.log("UPDATE SUCCESS JOB-ISAIR-0 id=" + id + " isair=" + isair);
         }
     })
     /* delete btemp before insert */
