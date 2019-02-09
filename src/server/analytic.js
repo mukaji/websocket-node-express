@@ -151,15 +151,16 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                 sTemp = results[0].celsius;
                 eTemp = results[results.length - 1].celsius;
                 diff = eTemp - sTemp;
-                console.log("id=" + id + " STEMP=" + sTemp + " ETEMP=" + eTemp + " DIFF=" + diff);
+                hourdiff = results[0].hourdiff;
+                bTemp = results[0].btemp;
+                console.log("id=" + id + " STEMP=" + sTemp + " ETEMP=" + eTemp + " DIFF=" + diff+" BTEMP="+bTemp+" HOURDIFF="+hourdiff+" TAMTEMP="+outsideTemp);
                 if (diff <= -1) {
                     /* temp decrease more then -1 celsius -> isair=1 */
                     setIsAir(id, 1, sTemp, deviceid);
                     console.log("DIFF <= -1 -> AIR");
                 } else if (diff >= 1) {
                     /* temp increase more then 1 celsius then check more */
-                    hourdiff = results[0].hourdiff;
-                    bTemp = results[0].btemp;
+                   
                     setNoAir(id, 0, deviceid);
                     console.log("DIFF >= 1 -> NOAIR");
                 } else {
@@ -179,6 +180,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                     }
                 }
             }else{
+            
                 console.log("id="+id+" results.length=0");
             }
         }
