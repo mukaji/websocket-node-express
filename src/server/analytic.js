@@ -184,7 +184,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                         if (previousIsAir != null) {
                             //update isair=previousIsAir
                             setIsAirByPrevious(id, previousIsAir);
-                            console.log("id=" + id + " PREVIOUS = " + previousIsAir);
+                            //console.log("id=" + id + " PREVIOUS = " + previousIsAir);
                         } else {
                             console.log("id=" + id + " PREVIOUS is null");
                         }
