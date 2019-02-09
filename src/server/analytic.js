@@ -288,7 +288,7 @@ function setNoAir(id, isair,deviceid) {
         }
     })
     /* delete btemp before insert */
-    connection.query('delete from btem  where deviceid=?  ', deviceid, function (err, rows, fields) {
+    connection.query('delete from btemp  where deviceid=?  ', deviceid, function (err, rows, fields) {
         if (err) {
             console.log("ERROR:" + err.message);
         } else {

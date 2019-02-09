@@ -99,8 +99,7 @@ app.get('/hotel-getstatus', function (req, res) {
 /* Insert data into hotel */
 app.post('/hotel-monitor', function(req,res){ 
 
-    getActiveDevice(function(err,isActive){
-        console.log("isActive="+isActive);
+    getActiveDevice(function(err,isActive){ 
         if(isActive==false){
             res.send("BLOCK"); 
         }else{
