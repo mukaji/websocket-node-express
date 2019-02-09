@@ -97,7 +97,7 @@ async function updateUsed(id, used) {
             console.log("ERROR updateUsed:" + err.message);
 
         } else {
-            //console.log("UPDATE SUCCESS JOB id=" + id + " ishuman=" + ishuman + " islight=" + islight);
+            console.log("UPDATE SUCCESS USED id=" + id + " used=" + used);
         }
     })
     connection.end()
