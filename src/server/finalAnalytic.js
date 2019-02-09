@@ -62,11 +62,11 @@ async function doEachRows(rows) {
         ishuman = rows[i].ishuman;
         isair = rows[i].isair;
         islight = rows[i].islight;
-        if (ishuman == 1) {
+        if (ishuman !=null && ishuman == 1) {
             used = 1;
-        } else if (islight == 1) {
+        } else if (islight !=null && islight == 1) {
             used = 1;
-        } else if (isair == 1) {
+        } else if (isair!=null && isair == 1) {
             used = 1;
         }
         //update used
