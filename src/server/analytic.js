@@ -129,7 +129,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
     if (celsius >= 30) {
         /* if temp more than 30 -> noair */
         //set isair=0, delete btemp
-        setNoAir(id, 0);
+        setNoAir(id, 0,deviceid);
         console.log("TEMP >=30 -> NOAIR");
     } else {
         /* check day/night */
@@ -138,7 +138,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
             /* day */
             if (celsius <= outerHeight - 3) {
                 //set isair=1, btemp=current temp
-                setIsAir(id, 1, celsius);
+                setIsAir(id, 1, celsius,deviceid);
                 console.log("DAY && TEMP <= TTEMP-3 -> AIR");
             } else {
                 check10Minutes = true;
@@ -180,7 +180,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                         console.log("id="+id+" STEMP=" + sTemp + " ETEMP=" + eTemp + " DIFF=" + diff);
                         if (diff <= -1) {
                             /* temp decrease more then -1 celsius -> isair=1 */
-                            setIsAir(id, 1, sTemp);
+                            setIsAir(id, 1, sTemp,deviceid);
                             console.log("DIFF <= -1 -> AIR");
                         } else if (diff >= 1) {
                             /* temp increase more then 1 celsius then check more */
@@ -190,7 +190,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                                 /* if btemp is not older than 1 hour */
                                 if (celsius >= bTemp - 1) {
                                     /* if current temp >= previousTemp-1 -> noair */
-                                    setNoAir(id, 0);
+                                    setNoAir(id, 0,deviceid);
 
                                     console.log("id="+id+" HOURDIFF <=1 && TEMP=> BTEMP-1 (" + celsius + "=>" + bTemp - 1 + ") -> NOAIR");
                                 } else {
@@ -202,7 +202,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                                 /* if btemp is older than 1 hour then check with tambon-temp */
                                 if (celsius >= outsideTemp - 2) {
                                     /* if current temp >= outsideTemp-2 -> noair */
-                                    setNoAir(id, 0);
+                                    setNoAir(id, 0,deviceid);
                                     console.log("id="+id+" HOURDIFF>1 && TEMP>=TTEMP-2 (" + celsius + ">=" + outsideTemp - 2 + ") -> NOAIR");
                                 } else {
                                     //nothing
@@ -227,7 +227,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
 
 
 /* set when isair=1 */
-function setIsAir(id, isair, bTemp) {
+function setIsAir(id, isair, bTemp,deviceid) {
     var connection = mysql.createConnection({
         host: dbhost,
         user: dbuser,
@@ -270,7 +270,7 @@ function setIsAir(id, isair, bTemp) {
 
 
 /* set when isair=0 */
-function setNoAir(id, isair) {
+function setNoAir(id, isair,deviceid) {
     var connection = mysql.createConnection({
         host: dbhost,
         user: dbuser,
