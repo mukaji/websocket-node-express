@@ -69,11 +69,11 @@ async function doEachRows(rows) {
         } else if (isair != null && isair == 1) {
             used = 1;
         }
-        if (ishuman == 1) score++;
-        if (islight == 1) score++;
-        if (isair == 1) score++;
+        if (ishuman == 1) score=score+4;
+        if (islight == 1) score=score+4;
+        if (isair == 1) score=score+2;
          
-        percent = (score * 100) / 3;
+        percent = (score * 100) / 10;
         console.log("id=" + id + " ishuman=" + ishuman + " islight=" + islight + " isair=" + isair + " used=" + used+" percent="+percent);
         //update used
         updateUsed(id, used,percent);
