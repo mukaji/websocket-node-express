@@ -58,6 +58,8 @@ async function doEachRows(rows) {
     var index = 0, score = 0;
     for (let i = 0; i < rows.length; i++) {
         used = 0;
+        score = 0;
+        percent=0;
         id = rows[i].id;
         ishuman = rows[i].ishuman;
         isair = rows[i].isair;
