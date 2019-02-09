@@ -75,15 +75,15 @@ async function doEachRows(rows) {
          /* check night time 19:00 - 5:00 */
          if ((hour >= 19 && hour <= 24) || (hour >= 0 && hour <= 5)) {
              //night 
-             total=10;
-             if (ishuman == 1) score = score + 4;
-             if (islight == 1) score = score + 4;
-             if (isair == 1) score = score + 2;
+             total=4;
+             if (ishuman == 1) score = score + 2;
+             if (islight == 1) score = score + 1;
+             if (isair == 1) score = score + 1;
          }else{
              //day
-             total=6;
-             if (ishuman == 1) score = score + 4; 
-             if (isair == 1) score = score + 2;
+             total=3;
+             if (ishuman == 1) score = score + 2; 
+             if (isair == 1) score = score + 1;
          }
        
         if (score == 0) {
