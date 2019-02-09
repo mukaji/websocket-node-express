@@ -187,7 +187,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                         /* temp increase more then 1 celsius then check more */
                         hourdiff = results[0].hourdiff;
                         bTemp = results[0].btemp;
-                        if (hourdiff <= 1 && bTemp != null) {
+                        if (hourdiff==null || (hourdiff <= 1 && bTemp != null)) {
                             /* if btemp is not older than 1 hour */
                             if (celsius >= bTemp - 1) {
                                 /* if current temp >= previousTemp-1 -> noair */
