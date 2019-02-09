@@ -114,7 +114,7 @@ function updateDataDB(id, ishuman, islight, outsideTemp) {
     /* update temperature */
     connection.query('update job set ishuman=?,  islight=?,tambontemp=? where id=?  ', parameters, function (err, rows, fields) {
         if (err) {
-            console.log("ERROR:" + err.message);
+            console.log("ERROR updateDataDB:" + err.message);
 
         } else {
             //console.log("UPDATE SUCCESS JOB id=" + id + " ishuman=" + ishuman + " islight=" + islight);
@@ -169,7 +169,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
 
             connection.query(sql, deviceid, function (err, results) {
                 if (err) {
-                    console.log("ERROR:" + err.message);
+                    console.log("ERROR Get10Minutes:" + err.message);
                 } else {
                     //get first
                     var sTemp, eTemp, diff, hourdiff, bTemp;
@@ -239,7 +239,7 @@ function setIsAir(id, isair, bTemp,deviceid) {
     /* update isair=1 */
     connection.query('update job set isair=? where id=?  ', id, function (err, rows, fields) {
         if (err) {
-            console.log("ERROR:" + err.message);
+            console.log("ERROR UpdateJobIsAir=1:" + err.message);
         } else {
             console.log("UPDATE SUCCESS JOB-ISAIR-1 id=" + id + " isair=" + isair);
         }
@@ -247,14 +247,14 @@ function setIsAir(id, isair, bTemp,deviceid) {
     /* if betemp already exist then skip */
     connection.query("select deviceid from btemp where deviceid=? ", deviceid, function (err, res) {
         if (err) {
-            console.log("ERROR:" + err.message);
+            console.log("ERROR CheckDeviceBTemp:" + err.message);
         } else {
             if (res.length == 0) {
                 /* insert btemp */
                 var parameters = [deviceid, bTemp];
                 connection.query('insert ignore into btemp(deviceid,btemp,createddate) values(?,?,now()) ', parameters, function (err, rows, fields) {
                     if (err) {
-                        console.log("ERROR:" + err.message);
+                        console.log("ERROR InsertBTemp:" + err.message);
                     } else {
                         console.log("INSERT SUCCESS BTemp deviceid=" + deviceid + " btemp=" + bTemp);
                     }
@@ -282,7 +282,7 @@ function setNoAir(id, isair,deviceid) {
     /* update isair=0 */
     connection.query('update job set isair=? where id=?  ', id, function (err, rows, fields) {
         if (err) {
-            console.log("ERROR:" + err.message);
+            console.log("ERROR UpdateJobIsAir=0:" + err.message);
         } else {
             console.log("UPDATE SUCCESS JOB-ISAIR-1 id=" + id + " isair=" + isair);
         }
@@ -290,7 +290,7 @@ function setNoAir(id, isair,deviceid) {
     /* delete btemp before insert */
     connection.query('delete from btemp  where deviceid=?  ', deviceid, function (err, rows, fields) {
         if (err) {
-            console.log("ERROR:" + err.message);
+            console.log("ERROR DeleteBTemp:" + err.message);
         } else {
             console.log("DELETE BTemp deviceid=" + deviceid);
         }
