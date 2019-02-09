@@ -252,7 +252,7 @@ function setIsAir(id, isair, bTemp,deviceid) {
             if (res.length == 0) {
                 /* insert btemp */
                 var parameters = [deviceid, bTemp];
-                connection.query('insert ignore into btem(deviceid,btemp,createddate) values(?,?,now()) ', parameters, function (err, rows, fields) {
+                connection.query('insert ignore into btemp(deviceid,btemp,createddate) values(?,?,now()) ', parameters, function (err, rows, fields) {
                     if (err) {
                         console.log("ERROR:" + err.message);
                     } else {

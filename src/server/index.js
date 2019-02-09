@@ -172,7 +172,7 @@ function insertData(req,res){
             console.log("ERROR:"+err.message);
             res.send("ERROR:"+err.message);
         } else{
-            console.log('SUCCESS: deviceid='+deviceid + ', celsius=' + celsius+', ismove='+ismove+', light='+light+', date='+ date.format(new Date(), 'YYYY-MM-DD HH:mm:ss'));
+            //console.log('SUCCESS: deviceid='+deviceid + ', celsius=' + celsius+', ismove='+ismove+', light='+light+', date='+ date.format(new Date(), 'YYYY-MM-DD HH:mm:ss'));
             res.send('SUCCESS');
         }
     })
@@ -183,7 +183,7 @@ function insertData(req,res){
             console.log("ERROR:"+err.message);
             res.send("ERROR:"+err.message);
         } else{
-            console.log('UPDATE SUCCESS: deviceid='+deviceid + ' date='+ date.format(new Date(), 'YYYY-MM-DD HH:mm:ss'));
+           // console.log('UPDATE SUCCESS: deviceid='+deviceid + ' date='+ date.format(new Date(), 'YYYY-MM-DD HH:mm:ss'));
             
         }
     })
