@@ -153,7 +153,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                 diff = eTemp - sTemp;
                 hourdiff = results[0].hourdiff;
                 bTemp = results[0].btemp;
-                console.log("id=" + id + " STEMP=" + sTemp + " ETEMP=" + eTemp + " DIFF=" + diff+" BTEMP="+bTemp+" HOURDIFF="+hourdiff+" TAMTEMP="+outsideTemp);
+                console.log("id=" + id + " STEMP=" + sTemp + " ETEMP=" + eTemp + " DIFF=" + diff+" BTEMP="+bTemp+" HOURDIFF="+hourdiff+" TAMTEMP="+outsideTemp +" DEVICE="+deviceid);
                 if (diff <= -1) {
                     /* temp decrease more then -1 celsius -> isair=1 */
                     setIsAir(id, 1, sTemp, deviceid);
@@ -294,7 +294,7 @@ async function analyticAir_bak(id, celsius, outsideTemp, hour, deviceid) {
 
 
 /* set when isair=1 */
-function setIsAir(id, isair, bTemp, deviceid) {
+async function setIsAir(id, isair, bTemp, deviceid) {
     var parameters1 = [isair, id];
 
     var connection = mysql.createConnection({
@@ -339,7 +339,7 @@ function setIsAir(id, isair, bTemp, deviceid) {
 
 
 /* set when isair=0 */
-function setNoAir(id, isair, deviceid) {
+async function setNoAir(id, isair, deviceid) {
     var parameters = [isair, id];
 
     var connection = mysql.createConnection({
@@ -370,7 +370,7 @@ function setNoAir(id, isair, deviceid) {
 }
 
 /* set isair = previous isair */
-function setIsAirByPrevious(id, isair) {
+async function setIsAirByPrevious(id, isair) {
     var parameters = [isair, id];
 
     var connection = mysql.createConnection({
