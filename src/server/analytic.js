@@ -148,19 +148,21 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
             //get first
             var sTemp, eTemp, diff, hourdiff, bTemp;
             if (results.length != 0) {
+                /* lastest temp */
                 sTemp = results[0].celsius;
+                /* older temp */
                 eTemp = results[results.length - 1].celsius;
-                diff = eTemp - sTemp;
+                diff = sTemp - eTemp;
                 hourdiff = results[0].hourdiff;
                 bTemp = results[0].btemp;
-                console.log("id=" + id + " STEMP=" + sTemp + " ETEMP=" + eTemp + " DIFF=" + diff+" BTEMP="+bTemp+" HOURDIFF="+hourdiff+" TAMTEMP="+outsideTemp +" DEVICE="+deviceid);
+                console.log("id=" + id + " STEMP=" + sTemp + " ETEMP=" + eTemp + " DIFF=" + diff + " BTEMP=" + bTemp + " HOURDIFF=" + hourdiff + " TAMTEMP=" + outsideTemp + " DEVICE=" + deviceid);
                 if (diff <= -1) {
                     /* temp decrease more then -1 celsius -> isair=1 */
                     setIsAir(id, 1, sTemp, deviceid);
                     console.log("DIFF <= -1 -> AIR");
                 } else if (diff >= 1) {
                     /* temp increase more then 1 celsius then check more */
-                   
+
                     setNoAir(id, 0, deviceid);
                     console.log("DIFF >= 1 -> NOAIR");
                 } else {
@@ -171,17 +173,17 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                         if (previousIsAir != null) {
                             //update isair=previousIsAir
                             setIsAirByPrevious(id, previousIsAir);
-                            console.log("id="+id+" PREVIOUS = "+previousIsAir);
-                        }else{
-                            console.log("id="+id+" PREVIOUS is null");
+                            console.log("id=" + id + " PREVIOUS = " + previousIsAir);
+                        } else {
+                            console.log("id=" + id + " PREVIOUS is null");
                         }
-                    }else{
-                        console.log("id="+id+" results.length <1 (results.length="+results.length+")");
+                    } else {
+                        console.log("id=" + id + " results.length <1 (results.length=" + results.length + ")");
                     }
                 }
-            }else{
-            
-                console.log("id="+id+" results.length=0");
+            } else {
+
+                console.log("id=" + id + " results.length=0");
             }
         }
 
@@ -320,14 +322,7 @@ async function setIsAir(id, isair, bTemp, deviceid) {
         } else {
             if (res.length == 0) {
                 /* insert btemp */
-                var parameters = [deviceid, bTemp];
-                connection.query('insert ignore into btemp(deviceid,btemp,createddate) values(?,?,now()) ', parameters, function (err, rows, fields) {
-                    if (err) {
-                        console.log("ERROR InsertBTemp:" + err.message);
-                    } else {
-                        console.log("INSERT SUCCESS BTemp deviceid=" + deviceid + " btemp=" + bTemp);
-                    }
-                })
+                insertBTemp(deviceid, bTemp);
             } else {
                 //don't update btemp
             }
@@ -387,6 +382,30 @@ async function setIsAirByPrevious(id, isair) {
             console.log("ERROR UpdateJobIsAir=0:" + err.message);
         } else {
             console.log("UPDATE SUCCESS JOB-ISAIR-PRE id=" + id + " isair=" + isair);
+        }
+    })
+    connection.end()
+}
+
+
+
+/* insert btemp */
+async function insertBTemp(deviceid, bTemp) {
+
+    var connection = mysql.createConnection({
+        host: dbhost,
+        user: dbuser,
+        password: dbpassword,
+        database: dbschema
+    });
+
+    connection.connect()
+    var parameters = [deviceid, bTemp];
+    connection.query('insert ignore into btemp(deviceid,btemp,createddate) values(?,?,now()) ', parameters, function (err, rows, fields) {
+        if (err) {
+            console.log("ERROR InsertBTemp:" + err.message);
+        } else {
+            console.log("INSERT SUCCESS BTemp deviceid=" + deviceid + " btemp=" + bTemp);
         }
     })
     connection.end()
