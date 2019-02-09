@@ -32,7 +32,7 @@ async function analyticJobProcess() {
 
             connection.query(sql, function (err, rows) {
                 if (err) {
-                    console.log("ERROR:" + err.message);
+                    console.log("ERROR SelectAnalyticJob:" + err.message);
                 } else {
                     /* for each row for analytic use room */
                     doEachRows(rows);
@@ -41,7 +41,7 @@ async function analyticJobProcess() {
 
             connection.end()
         } catch (error) {
-            console.log("ERROR:" + error.message);
+            console.log("ERROR AnalyticJobProcess:" + error.message);
         } finally {
             await delay(60000);//sleep 1 minute  
         }

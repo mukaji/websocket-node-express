@@ -39,16 +39,16 @@ app.get('/show', function (req, res) {
 
     connection.connect()
 
-    var sql='select id,celsius,ismove,light,hour,isair,ishuman,islight,tambontemp from job order by id desc limit 0,20  '; 
+    var sql='select id,celsius,ismove,light,hour,isair,ishuman,islight,tambontemp,used from job order by id desc limit 0,20  '; 
     connection.query(sql, function (err, results) {
         if (err){
             console.log("ERROR:"+err.message);
             res.send("ERROR:"+err.message);
         } else{   
             // json to table
-            var transform = {"<>":"div","html":"${id} | ${celsius} | ${ismove} | ${light} | ${isair} | ${ishuman} | ${islight} | ${hour}| ${tambontemp}"};
+            var transform = {"<>":"div","html":"${id} | ${celsius} | ${ismove} | ${light} | ${isair} | ${ishuman} | ${islight} | ${hour}| ${tambontemp} | ${used}"};
             var html = json2html.transform(results,transform);
-            html="id | celsius| ismove | light | isair | ishuman | islight | hour | tambontemp<br/>"+html;
+            html="id | celsius| ismove | light | isair | ishuman | islight | hour | tambontemp | used<br/>"+html;
             res.send(html);
         }
     })
