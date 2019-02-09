@@ -126,12 +126,12 @@ function updateDataDB(id, ishuman, islight, outsideTemp) {
 async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
     if (deviceid == undefined) return;
     var check10Minutes = false;
-    if (celsius >= 30) {
-        /* if temp more than 30 -> noair */
-        //set isair=0, delete btemp
-        setNoAir(id, 0,deviceid);
-        console.log("TEMP >=30 -> NOAIR");
-    } else {
+    //if (celsius >= 30) {
+    //    /* if temp more than 30 -> noair */
+    //    //set isair=0, delete btemp
+    //    setNoAir(id, 0,deviceid);
+    //    console.log("TEMP >=30 -> NOAIR");
+    //} else {
         /* check day/night */
         /* day=8-17 , night=18-7 */
         if (hour >= 8 && hour <= 18) {
@@ -222,7 +222,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
             connection.end()
             /*#### END: check 10 minutes ago ####*/
         }
-    }
+    //}
 }
 
 
@@ -296,7 +296,7 @@ function setNoAir(id, isair,deviceid) {
         if (err) {
             console.log("ERROR DeleteBTemp:" + err.message);
         } else {
-            console.log("DELETE BTemp deviceid=" + deviceid);
+            //console.log("DELETE BTemp deviceid=" + deviceid);
         }
     })
     connection.end()
