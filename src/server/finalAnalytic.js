@@ -55,6 +55,7 @@ const delay = (amount = number) => {
 async function doEachRows(rows) {
     var id, ishuman, isair, islight;
     var used = 0;
+    var index=0;
     for (let i = 0; i < rows.length; i++) {
         used = 0;
         id = rows[i].id;
@@ -70,6 +71,12 @@ async function doEachRows(rows) {
         }
         //update used
         updateUsed(id, used); 
+        if(index>=50){
+            index=0;
+            await delay(3000);
+        }
+        index++;
+
     }
 }
 
