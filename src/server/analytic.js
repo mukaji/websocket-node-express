@@ -169,7 +169,18 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                     //temp doesn't change
                     //get previous record
                     if (results.length >= 1) {
-                        var previousIsAir = results[1].isair;
+                        //get previous
+                        var previousIsAir;
+                        for (let i = 0; i < rows.length; i++) {
+                              previousIsAir = results[i].isair;
+                              if(previousIsAir==null){
+                                console.log("GET previousIsAir is null ");
+                              }else{
+                                  console.log("GET previousIsAir="+previousIsAir);
+                                  break;
+                              }
+                        }
+                        //var previousIsAir = results[1].isair;
                         if (previousIsAir != null) {
                             //update isair=previousIsAir
                             setIsAirByPrevious(id, previousIsAir);
