@@ -53,9 +53,9 @@ const delay = (amount = number) => {
 }
 
 async function doEachRows(rows) {
-    var id, ishuman, isair, islight, percent;
+    var id, ishuman, isair, islight, percent,hour;
     var used = 0;
-    var index = 0, score = 0;
+    var index = 0, score = 0,total=10;
     for (let i = 0; i < rows.length; i++) {
         used = 0;
         score = 0;
@@ -64,6 +64,7 @@ async function doEachRows(rows) {
         ishuman = rows[i].ishuman;
         isair = rows[i].isair;
         islight = rows[i].islight;
+        hour = rows[i].hour;
         if (ishuman != null && ishuman == 1) {
             used = 1;
         } else if (islight != null && islight == 1) {
@@ -71,18 +72,27 @@ async function doEachRows(rows) {
         } else if (isair != null && isair == 1) {
             used = 1;
         }
-        if (ishuman == 1) score = score + 4;
-        if (islight == 1) score = score + 4;
-        if (isair == 1) score = score + 2;
-
+         /* check night time 19:00 - 5:00 */
+         if ((hour >= 19 && hour <= 24) || (hour >= 0 && hour <= 5)) {
+             //night 
+             total=10;
+             if (ishuman == 1) score = score + 4;
+             if (islight == 1) score = score + 4;
+             if (isair == 1) score = score + 2;
+         }else{
+             //day
+             total=6;
+             if (ishuman == 1) score = score + 4; 
+             if (isair == 1) score = score + 2;
+         }
+       
         if (score == 0) {
-            percent = 0;
-           
+            percent = 0; 
         } else {
-            percent = (score * 100) / 10;
+            percent = (score * 100) / total;
             if(percent>=100) percent=100;
         }
-        console.log("id=" + id + " ishuman=" + ishuman + " islight=" + islight + " isair=" + isair + " used=" + used + " score="+score+" percent=" + percent);
+        console.log("id=" + id + " ishuman=" + ishuman + " islight=" + islight + " isair=" + isair + " used=" + used + " score="+score+" percent=" + percent+" hour="+hour);
         //update used
         updateUsed(id, used, percent);
         if (index >= 50) {
