@@ -69,14 +69,20 @@ async function doEachRows(rows) {
         } else if (isair != null && isair == 1) {
             used = 1;
         }
-        if (ishuman == 1) score=score+4;
-        if (islight == 1) score=score+4;
-        if (isair == 1) score=score+2;
-         
-        percent = (score * 100) / 10;
-        console.log("id=" + id + " ishuman=" + ishuman + " islight=" + islight + " isair=" + isair + " used=" + used+" percent="+percent);
+        if (ishuman == 1) score = score + 4;
+        if (islight == 1) score = score + 4;
+        if (isair == 1) score = score + 2;
+
+        if (score == 0) {
+            percent = 0;
+           
+        } else {
+            percent = (score * 100) / 10;
+            if(percent>=100) percent=100;
+        }
+        console.log("id=" + id + " ishuman=" + ishuman + " islight=" + islight + " isair=" + isair + " used=" + used + " score="+score+" percent=" + percent);
         //update used
-        updateUsed(id, used,percent);
+        updateUsed(id, used, percent);
         if (index >= 50) {
             index = 0;
             await delay(3000);
@@ -87,8 +93,8 @@ async function doEachRows(rows) {
 }
 
 
-async function updateUsed(id, used,percent) {
-    var parameters = [used,percent, id];
+async function updateUsed(id, used, percent) {
+    var parameters = [used, percent, id];
     var connection = mysql.createConnection({
         host: dbhost,
         user: dbuser,
