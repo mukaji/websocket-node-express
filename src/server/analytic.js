@@ -76,7 +76,7 @@ async function doEachRows(rows) {
         /* check night time 19:00 - 5:00 */
         if ((hour >= 19 && hour <= 24) || (hour >= 0 && hour <= 5)) {
 
-            if (light == "light" || light == "bright" || light == "very bright" || light == "white") {
+            if (light == "light" || light == "bright" || light == "very bright" || light == "white" || light=="dim light") {
                 /* if night time and there is light that mean there is human */
                 islight = 1;
             } else {
