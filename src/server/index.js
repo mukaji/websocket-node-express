@@ -9,7 +9,7 @@ var analytic = require("./analytic");
 var finalAnalytic = require("./finalAnalytic");
 var member = require('./member');
 
-var sumTemp=require("./sumTempLast10Minutes");
+var sumTemp = require("./sumTempLast10Minutes");
 
 /* db configuration */
 var mysql = require('mysql')
@@ -51,54 +51,54 @@ app.get('/show', function (req, res) {
             res.send("ERROR:" + err.message);
         } else {
             // json to table
-            var html="<style>";
-            html+="#customers {";
-            html+="font-family: \"Trebuchet MS\", Arial, Helvetica, sans-serif;";
-            html+="border-collapse: collapse;";
-            html+="width: 100%;";
-            html+="}";
-            
-            html+="#customers td, #customers th {";
-            html+="border: 1px solid #ddd;";
-            html+="padding: 8px;";
-            html+="}";
-            
-            html+="#customers tr:nth-child(even){background-color: #f2f2f2;}";
-            
-            html+="#customers tr:hover {background-color: #ddd;}";
-            
-            html+="#customers th {";
-            html+="padding-top: 12px;";
-            html+="padding-bottom: 12px;";
-            html+="text-align: left;";
-            html+="background-color: #4CAF50;";
-            html+="color: white;";
-            html+="}";
-            html+="</style>";
-            html+="<table id=\"customers\"><tr>";
-            html+="<td>id</td><td>celsius</td><td>diff</td><td>diffsum10</td><td>ismove</td><td>light</td><td>hour</td><td>isair</td><td>ishuman</td><td>islight</td><td>tambontemp</td><td>used</td><td>percentused</td>";
-            html+="</tr>";
-         
-            var id,celsius,ismove,light,hour,isair,ishuman,islight,tambontemp,used,percentused,diff,diffsum10;
+            var html = "<style>";
+            html += "#customers {";
+            html += "font-family: \"Trebuchet MS\", Arial, Helvetica, sans-serif;";
+            html += "border-collapse: collapse;";
+            html += "width: 100%;";
+            html += "}";
+
+            html += "#customers td, #customers th {";
+            html += "border: 1px solid #ddd;";
+            html += "padding: 8px;";
+            html += "}";
+
+            html += "#customers tr:nth-child(even){background-color: #f2f2f2;}";
+
+            html += "#customers tr:hover {background-color: #ddd;}";
+
+            html += "#customers th {";
+            html += "padding-top: 12px;";
+            html += "padding-bottom: 12px;";
+            html += "text-align: left;";
+            html += "background-color: #4CAF50;";
+            html += "color: white;";
+            html += "}";
+            html += "</style>";
+            html += "<table id=\"customers\"><tr>";
+            html += "<td>id</td><td>celsius</td><td>diff</td><td>diffsum10</td><td>ismove</td><td>light</td><td>hour</td><td>isair</td><td>ishuman</td><td>islight</td><td>tambontemp</td><td>used</td><td>percentused</td>";
+            html += "</tr>";
+
+            var id, celsius, ismove, light, hour, isair, ishuman, islight, tambontemp, used, percentused, diff, diffsum10;
             for (let i = 0; i < results.length; i++) {
-              id=results[i].id;
-              celsius=results[i].celsius;
-              ismove=results[i].ismove;
-              light=results[i].light;
-              hour=results[i].hour;
-              isair=results[i].isair;
-              ishuman=results[i].ishuman;
-              islight=results[i].islight;
-              tambontemp=results[i].tambontemp;
-              used=results[i].used;
-              percentused=results[i].percentused;
-              diff=results[i].diff;
-              diffsum10=results[i].diffsum10;
-              html+="<tr>";
-              html+="<td>"+id+"</td><td>"+celsius+"</td><td>"+diff+"</td><td>"+diffsum10+"</td><td>"+ismove+"</td><td>"+light+"</td><td>"+hour+"</td><td>"+isair+"</td><td>"+ishuman+"</td><td>"+islight+"</td><td>"+tambontemp+"</td><td>"+used+"</td><td>"+percentused+"</td>";
-              html+="</tr>";
+                id = results[i].id;
+                celsius = results[i].celsius;
+                ismove = results[i].ismove;
+                light = results[i].light;
+                hour = results[i].hour;
+                isair = results[i].isair;
+                ishuman = results[i].ishuman;
+                islight = results[i].islight;
+                tambontemp = results[i].tambontemp;
+                used = results[i].used;
+                percentused = results[i].percentused;
+                diff = results[i].diff;
+                diffsum10 = results[i].diffsum10;
+                html += "<tr>";
+                html += "<td>" + id + "</td><td>" + celsius + "</td><td>" + diff + "</td><td>" + diffsum10 + "</td><td>" + ismove + "</td><td>" + light + "</td><td>" + hour + "</td><td>" + isair + "</td><td>" + ishuman + "</td><td>" + islight + "</td><td>" + tambontemp + "</td><td>" + used + "</td><td>" + percentused + "</td>";
+                html += "</tr>";
             }
-            html+="</table>";
+            html += "</table>";
             //var transform = { "<>": "div", "html": "${id} | ${celsius} | ${diff} | ${diffsum10} | ${ismove} | ${light} | ${isair} | ${ishuman} | ${islight} | ${hour}| ${tambontemp} | ${used} | ${percentused}" };
             //var html = json2html.transform(results, transform);
             //html = "id | celsius | diff | diffsum10 | ismove | light | isair | ishuman | islight | hour | tambontemp | used | percentused<br/>" + html;
@@ -164,16 +164,33 @@ app.post('/hotel-monitor', function (req, res) {
 });
 
 /* signup */
-app.post('/signup', function (req, res) {
-
+app.post('/signup', function (req, res) { 
     var email = req.body.email;
     var password = req.body.password;
-    var isok = member.memberSignUp(email, password, res);
-    console.log("isok=" + isok);
-    res.send("isok=" + isok);
+    if (validateEmail(email)) {
+        member.memberSignUp(email, password, res);
+    }else{
+        res.send("ERROR:Invalid email address");
+    }
+});
+
+/* login */
+app.post('/login', function (req, res) { 
+    var email = req.body.email;
+    var password = req.body.password;
+    if (validateEmail(email)) {
+        member.memberLogin(email, password, res);
+    }else{
+        res.send("ERROR:Invalid email address");
+    }
 });
 
 app.listen(8080, () => startUp());
+
+function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 
 function startUp() {
     console.log("Listening on port 8080!");
