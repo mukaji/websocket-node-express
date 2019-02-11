@@ -68,9 +68,15 @@ async function doEachDeviceId(deviceid) {
             console.log("ERROR doEachDeviceId:" + err.message);
         } else {
             //doEachRows(results);
+            var index=0;
             for (let i = 0; i < results.length; i++) {
                 // do each diffsum10=null
                 doEachNullDiffSum10(results[i].id, deviceid);
+                index++;
+                if(index>=100){
+                    index=0;
+                    await delay(3000);
+                }
             }
         }
 
