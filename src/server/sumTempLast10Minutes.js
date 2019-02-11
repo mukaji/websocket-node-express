@@ -111,16 +111,15 @@ async function doEachNullDiffSum10(id, deviceid) {
 async function doEachRows(mainid, rows) {
     var index = 0, diffTotal = 0;
     var id, celsius;
-    console.log("****");
+    
     for (let i = 0; i < rows.length; i++) {
         id = rows[i].id;
         //sum 10 records previous
         if (rows[i].diff != null && rows[i].diff != undefined) {
             diffTotal += parseFloat(rows[i].diff);
         }
-        console.log("mainid=" + mainid + " id=" + id + " diff=" + rows[i].diff);
-    }
-    console.log("mainid=" + mainid + " diffTotal=" + diffTotal);
+        
+    } 
     updateDiffSum10DB(mainid, diffTotal);
 }
 
