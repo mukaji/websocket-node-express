@@ -92,8 +92,7 @@ async function doEachRows(rows) {
         for (let j = 0; j < 10; j++) {
             if(i+j >= rows.length){
                 break;
-            } 
-            console.log("XXX="+rows[i + j].diff);
+            }  
             diffTotal += parseFloat(rows[i + j].diff); 
         }
  
@@ -121,7 +120,7 @@ async function updateDiffSum10DB(id, totaldiff) {
     /* update isair=previous isair */
     connection.query('update job set diffsum10=ROUND(?,2) where id=?  ', parameters, function (err, rows, fields) {
         if (err) {
-            console.log("ERROR updateDiffSum10DB:" + err.message);
+            console.log("ERROR updateDiffSum10DB:" + err.message +"  totaldiff="+totaldiff+" id="+id);
         } else {
              
         }
