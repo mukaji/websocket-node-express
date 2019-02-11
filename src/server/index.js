@@ -9,6 +9,8 @@ var analytic = require("./analytic");
 var finalAnalytic = require("./finalAnalytic");
 var member = require('./member');
 
+var sumTemp=require("./sumTempLast10Minutes");
+
 /* db configuration */
 var mysql = require('mysql')
 var fs = require('fs');
@@ -42,16 +44,16 @@ app.get('/show', function (req, res) {
 
     connection.connect()
 
-    var sql = 'select id,celsius,ismove,light,hour,isair,ishuman,islight,tambontemp,used,percentused,diff from job order by id desc limit 0,20  ';
+    var sql = 'select id,celsius,ismove,light,hour,isair,ishuman,islight,tambontemp,used,percentused,diff,diffsum10 from job order by id desc limit 0,20  ';
     connection.query(sql, function (err, results) {
         if (err) {
             console.log("ERROR:" + err.message);
             res.send("ERROR:" + err.message);
         } else {
             // json to table
-            var transform = { "<>": "div", "html": "${id} | ${celsius} | ${diff} | ${ismove} | ${light} | ${isair} | ${ishuman} | ${islight} | ${hour}| ${tambontemp} | ${used} | ${percentused}" };
+            var transform = { "<>": "div", "html": "${id} | ${celsius} | ${diff} | ${diffsum10} | ${ismove} | ${light} | ${isair} | ${ishuman} | ${islight} | ${hour}| ${tambontemp} | ${used} | ${percentused}" };
             var html = json2html.transform(results, transform);
-            html = "id | celsius | diff | ismove | light | isair | ishuman | islight | hour | tambontemp | used | percentused<br/>" + html;
+            html = "id | celsius | diff | diffsum10 | ismove | light | isair | ishuman | islight | hour | tambontemp | used | percentused<br/>" + html;
             res.send(html);
         }
     })
@@ -135,6 +137,8 @@ function startUp() {
     finalAnalytic.finalAnalytic();
     /* update diff between current temp and previous temp */
     updateDiff.updateDiff();
+    /* update diff temperature last 10 minutes */
+    sumTemp.sumTemp();
 }
 
 /* FUNCTION */
