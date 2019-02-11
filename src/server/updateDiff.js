@@ -100,6 +100,7 @@ async function doEachRows(rows) {
         /* get time diff between current and previous */
         minutes = Math.floor(Math.abs(dt1 - dt2) / 1000 / 60) % 60;
         if (minutes >= 10) {
+            console.log("minutes="+minutes);
             /* each record diff more than 10 minute then set diff=0 */ 
             updateTempDB(id, 0);
         } else {
