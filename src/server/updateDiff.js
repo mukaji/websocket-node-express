@@ -66,7 +66,7 @@ async function doEachDeviceId(deviceid) {
     });
     connection.connect()
     /* get job by deviceid where diff is null */
-    var sql = ' select j.id,j.celsius,j.createddate,j.deviceid from job j  where j.deviceid=? and j.diff is null order by j.id desc ';
+    var sql = ' select j.id,j.celsius,j.createddate,j.deviceid from job j  where j.deviceid=? order by j.id desc limit 0,2 ';
     connection.query(sql, deviceid, function (err, rows) {
         if (err) {
             console.log("ERROR updateDiffProcess:" + err.message);
@@ -85,6 +85,7 @@ async function doEachRows(rows) {
     for (let i = 0; i < rows.length; i++) {  
         id = rows[i].id; 
         if (i >= rows.length-1) {
+            console.log("i="+i+" rows.length="+rows.length);
             //last record then update diff=0
             updateTempDB(id,0);
             break;

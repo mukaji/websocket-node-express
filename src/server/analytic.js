@@ -187,86 +187,8 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
     connection.end()
 }
  
-
-async function analyticAir_bak(id, celsius, outsideTemp, hour, deviceid) {
-    if (deviceid == undefined) return;
-    // get 10 minutes before
-    var connection = mysql.createConnection({
-        host: dbhost,
-        user: dbuser,
-        password: dbpassword,
-        database: dbschema
-    });
-    connection.connect()
-
-    var sql = "select  distinct TIMESTAMPDIFF(HOUR,b.createddate,j.createddate) hourdiff ,b.btemp ,j.* ";
-    sql += " from job j  left outer join btemp b on b.deviceid=j.deviceid ";
-    sql += " where j.deviceid=?  ";
-    sql += " and  j.createddate >= NOW() - INTERVAL 10 MINUTE ";
-    sql += " order by j.id desc ";
-
-    connection.query(sql, deviceid, function (err, results) {
-        if (err) {
-            console.log("ERROR Get10Minutes:" + err.message);
-        } else {
-            //get first
-            var sTemp, eTemp, diff, hourdiff, bTemp;
-            if (results.length != 0) {
-                /* lastest temp */
-                sTemp = results[0].celsius;
-                /* older temp */
-                eTemp = results[results.length - 1].celsius;
-                diff = sTemp - eTemp;
-                hourdiff = results[0].hourdiff;
-                bTemp = results[0].btemp;
-                console.log("id=" + id + " STEMP=" + sTemp + " ETEMP=" + eTemp + " DIFF=" + diff + " BTEMP=" + bTemp + " HOURDIFF=" + hourdiff + " TAMTEMP=" + outsideTemp + " DEVICE=" + deviceid);
-                if (diff <= -1) {
-                    /* temp decrease more then -1 celsius -> isair=1 */
-                    setIsAir(id, 1, eTemp, deviceid);
-                    console.log("DIFF <= -1 -> AIR");
-                } else if (diff >= 1) {
-                    /* temp increase more then 1 celsius then check more */
-
-                    setNoAir(id, 0, deviceid);
-                    console.log("DIFF >= 1 -> NOAIR");
-                } else {
-                    //temp doesn't change
-                    //get previous record
-                    if (results.length >= 1) {
-                        //get previous
-                        var previousIsAir;
-                        for (let i = 0; i < results.length; i++) {
-                              previousIsAir = results[i].isair;
-                              if(previousIsAir==null){
-                                //console.log("GET previousIsAir is null ");
-                              }else{
-                                  //console.log("GET previousIsAir="+previousIsAir);
-                                  break;
-                              }
-                        }
-                        //var previousIsAir = results[1].isair;
-                        if (previousIsAir != null) {
-                            //update isair=previousIsAir
-                            setIsAirByPrevious(id, previousIsAir);
-                            //console.log("id=" + id + " PREVIOUS = " + previousIsAir);
-                        } else {
-                            console.log("id=" + id + " PREVIOUS is null");
-                        }
-                    } else {
-                        console.log("id=" + id + " results.length <1 (results.length=" + results.length + ")");
-                    }
-                }
-            } else {
-
-                console.log("id=" + id + " results.length=0");
-            }
-        }
-
-    })
-    connection.end()
-}
  
-
+  
 /* set when isair=1 */
 async function setIsAir(id, isair, bTemp, deviceid) {
     var parameters1 = [isair, id];
