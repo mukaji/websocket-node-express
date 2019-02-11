@@ -136,7 +136,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
 
     var sql = "select  distinct TIMESTAMPDIFF(HOUR,b.createddate,j.createddate) hourdiff ,b.btemp ,j.* ";
     sql += " from job j  left outer join btemp b on b.deviceid=j.deviceid ";
-    sql += " where j.deviceid=?  ";
+    sql += " where j.deviceid=?  and j.diffsum10 is not null ";
    // sql += " and  j.createddate >= NOW() - INTERVAL 10 MINUTE ";
     sql += " order by j.id desc limit 0,2 ";
 
