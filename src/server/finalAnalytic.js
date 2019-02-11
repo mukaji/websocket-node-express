@@ -92,7 +92,7 @@ async function doEachRows(rows) {
             percent = (score * 100) / total;
             if(percent>=100) percent=100;
         }
-        console.log("id=" + id + " ishuman=" + ishuman + " islight=" + islight + " isair=" + isair + " used=" + used + " score="+score+" percent=" + percent+" hour="+hour);
+        //console.log("id=" + id + " ishuman=" + ishuman + " islight=" + islight + " isair=" + isair + " used=" + used + " score="+score+" percent=" + percent+" hour="+hour);
         //update used
         updateUsed(id, used, percent);
         if (index >= 50) {
