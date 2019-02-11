@@ -95,6 +95,7 @@ async function doEachRows(rows) {
         diff = temp - tempPrevious;
         dt1 = new Date(date);
         dt2 = new Date(datePrevious);
+        console.log("ID="+id+" date="+date+" datePrevious="+datePrevious);
         /* get time diff between current and previous */
         minutes = Math.floor(Math.abs(dt1 - dt2) / 1000 / 60) % 60;
         if (minutes >= 10) { 
