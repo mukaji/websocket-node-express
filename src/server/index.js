@@ -51,7 +51,31 @@ app.get('/show', function (req, res) {
             res.send("ERROR:" + err.message);
         } else {
             // json to table
-            var html="<table><tr>";
+            var html="<style>";
+            html+="#customers {";
+            html+="font-family: \"Trebuchet MS\", Arial, Helvetica, sans-serif;";
+            html+="border-collapse: collapse;";
+            html+="width: 100%;";
+            html+="}";
+            
+            html+="#customers td, #customers th {";
+            html+="border: 1px solid #ddd;";
+            html+="padding: 8px;";
+            html+="}";
+            
+            html+="#customers tr:nth-child(even){background-color: #f2f2f2;}";
+            
+            html+="#customers tr:hover {background-color: #ddd;}";
+            
+            html+="#customers th {";
+            html+="padding-top: 12px;";
+            html+="padding-bottom: 12px;";
+            html+="text-align: left;";
+            html+="background-color: #4CAF50;";
+            html+="color: white;";
+            html+="}";
+            html+="</style>";
+            html+="<table id=\"customers\"><tr>";
             html+="<td>id</td><td>celsius</td><td>diff</td><td>diffsum10</td><td>ismove</td><td>light</td><td>hour</td><td>isair</td><td>ishuman</td><td>islight</td><td>tambontemp</td><td>used</td><td>percentused</td>";
             html+="</tr>";
          
@@ -71,7 +95,7 @@ app.get('/show', function (req, res) {
               id=results[i].diff;
               id=results[i].diffsum10;
               html+="<tr>";
-              html+="<td>${id}</td><td>${celsius}</td><td>${diff}</td><td>${diffsum10}</td><td>${ismove}</td><td>${light}</td><td>${hour}</td><td>${isair}</td><td>${ishuman}</td><td>${islight}</td><td>${tambontemp}</td><td>${used}</td><td>${percentused}</td>";
+              html+="<td>"+id+"</td><td>"+celsius+"</td><td>"+diff+"</td><td>"+diffsum10+"</td><td>"+ismove+"</td><td>"+light+"</td><td>"+hour+"</td><td>"+isair+"</td><td>"+ishuman+"</td><td>"+islight+"</td><td>"+tambontemp+"</td><td>"+used+"</td><td>"+percentused+"</td>";
               html+="</tr>";
             }
             html+="</table>";
