@@ -85,7 +85,7 @@ async function doEachRows(rows) {
     for (let i = 0; i < rows.length; i++) {  
         id = rows[i].id; 
         if (i >= rows.length-1) {
-            console.log("i="+i+" rows.length="+rows.length);
+            
             //last record then update diff=0
             updateTempDB(id,0);
             break;
@@ -100,13 +100,11 @@ async function doEachRows(rows) {
         dt2 = new Date(datePrevious);
         /* get time diff between current and previous */
         minutes = Math.floor(Math.abs(dt1 - dt2) / 1000 / 60) % 60;
-        if (minutes >= 10) {
-            console.log("minutes="+minutes);
+        if (minutes >= 10) { 
             /* each record diff more than 10 minute then set diff=0 */ 
             updateTempDB(id, 0);
         } else {
-            /* update diff each record */ 
-            console.log("minutes="+minutes+ " diff="+diff+" temp="+temp+" tempPrevious="+tempPrevious);
+            /* update diff each record */  
             updateTempDB(id, diff);
         }
         index++;
