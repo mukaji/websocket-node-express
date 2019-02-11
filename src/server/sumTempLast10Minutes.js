@@ -36,7 +36,7 @@ async function sumTempProcess() {
                     /* do each deviceid */
                     var deviceid;
                     for (let i = 0; i < rows.length; i++) {
-                        deviceid = rows[i].id; 
+                        deviceid = rows[i].id;
                         doEachDeviceId(deviceid);
                     }
                 }
@@ -63,7 +63,7 @@ async function doEachDeviceId(deviceid) {
     connection.connect()
 
     var sql = "select * from job where diffsum10 is null and deviceid=? order by id desc; ";
-    connection.query(sql,deviceid, function (err, results) {
+    connection.query(sql, deviceid, function (err, results) {
         if (err) {
             console.log("ERROR doEachDeviceId:" + err.message);
         } else {
@@ -81,22 +81,24 @@ const delay = (amount = number) => {
 }
 
 async function doEachRows(rows) {
-    var index = 0,diffTotal=0;
+    var index = 0, diffTotal = 0;
     var id, celsius;
     for (let i = 0; i < rows.length; i++) {
-        diffTotal=0;
+        diffTotal = 0;
         id = rows[i].id;
         celsius = rows[i].celsius;
-     
+
         //get 10 records previous
         for (let j = 0; j < 10; j++) {
-            if(i+j >= rows.length){
+            if (i + j >= rows.length) {
                 break;
-            }  
-            diffTotal += parseFloat(rows[i + j].diff); 
+            }
+            if (rows[i + j].diff != null) {
+                diffTotal += parseFloat(rows[i + j].diff);
+            }
         }
- 
-        updateDiffSum10DB(id,diffTotal); 
+
+        updateDiffSum10DB(id, diffTotal);
         if (index >= 100) {
             await delay(3000);
             index = 0;
@@ -120,9 +122,9 @@ async function updateDiffSum10DB(id, totaldiff) {
     /* update isair=previous isair */
     connection.query('update job set diffsum10=ROUND(?,2) where id=?  ', parameters, function (err, rows, fields) {
         if (err) {
-            console.log("ERROR updateDiffSum10DB:" + err.message +"  totaldiff="+totaldiff+" id="+id);
+            console.log("ERROR updateDiffSum10DB:" + err.message + "  totaldiff=" + totaldiff + " id=" + id);
         } else {
-             
+
         }
     })
     connection.end()
