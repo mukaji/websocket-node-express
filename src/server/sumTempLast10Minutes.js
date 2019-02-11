@@ -66,8 +66,7 @@ async function doEachDeviceId(deviceid) {
     connection.query(sql, deviceid, function (err, results) {
         if (err) {
             console.log("ERROR doEachDeviceId:" + err.message);
-        } else {
-
+        } else { 
             for (let i = 0; i < results.length; i++) {
                 // do each diffsum10=null
                 doEachNullDiffSum10(results[i].id, deviceid);
@@ -110,26 +109,12 @@ async function doEachNullDiffSum10(id, deviceid) {
 
 async function doEachRows(mainid, rows) {
     var index = 0, diffTotal = 0;
-    var dt1, dt2, minutes;
+    var id, celsius,diffsum10; 
     for (let i = 0; i < rows.length; i++) {
-        id = rows[i].id;
-        if (i >= rows.length - 1) {
-            break;
-        }
-        date = rows[i].createddate;
-        datePrevious = rows[i + 1].createddate;
-        dt1 = new Date(date);
-        dt2 = new Date(datePrevious);
-        /* get time diff between current and previous */
-        minutes = Math.floor(Math.abs(dt1 - dt2) / 1000 / 60) % 60;
-        if (minutes >= 10) {
-              /* each record diff more than 10 minute then set diff=0 */ 
-              diffTotal +=0;
-        } else {
-            //sum 10 records previous
-            if (rows[i].diff != null && rows[i].diff != undefined) {
-                diffTotal += parseFloat(rows[i].diff);
-            }
+        id = rows[i].id; 
+        //sum 10 records previous
+        if (rows[i].diff != null && rows[i].diff != undefined) {
+            diffTotal += parseFloat(rows[i].diff);
         }
 
     }
@@ -153,7 +138,7 @@ async function updateDiffSum10DB(id, totaldiff) {
         if (err) {
             console.log("ERROR updateDiffSum10DB:" + err.message + "  totaldiff=" + totaldiff + " id=" + id);
         } else {
-            console.log("UPDATE SUCCESS updateDiffSum10DB id=" + id + " totaldiff=" + totaldiff);
+            console.log("UPDATE SUCCESS updateDiffSum10DB id="+id +" totaldiff="+totaldiff);
         }
     })
     connection.end()
