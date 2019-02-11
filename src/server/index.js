@@ -51,9 +51,33 @@ app.get('/show', function (req, res) {
             res.send("ERROR:" + err.message);
         } else {
             // json to table
-            var transform = { "<>": "div", "html": "${id} | ${celsius} | ${diff} | ${diffsum10} | ${ismove} | ${light} | ${isair} | ${ishuman} | ${islight} | ${hour}| ${tambontemp} | ${used} | ${percentused}" };
-            var html = json2html.transform(results, transform);
-            html = "id | celsius | diff | diffsum10 | ismove | light | isair | ishuman | islight | hour | tambontemp | used | percentused<br/>" + html;
+            var html="<table><tr>";
+            html+="<td>id</td><td>celsius</td><td>diff</td><td>diffsum10</td><td>ismove</td><td>light</td><td>hour</td><td>isair</td><td>ishuman</td><td>islight</td><td>tambontemp</td><td>used</td><td>percentused</td>";
+            html+="</tr>";
+         
+            var id,celsius,ismove,light,hour,isair,ishuman,islight,tambontemp,used,percentused,diff,diffsum10;
+            for (let i = 0; i < results.length; i++) {
+              id=results[i].id;
+              id=results[i].celsius;
+              id=results[i].ismove;
+              id=results[i].light;
+              id=results[i].hour;
+              id=results[i].isair;
+              id=results[i].ishuman;
+              id=results[i].islight;
+              id=results[i].tambontemp;
+              id=results[i].used;
+              id=results[i].percentused;
+              id=results[i].diff;
+              id=results[i].diffsum10;
+              html+="<tr>";
+              html+="<td>${id}</td><td>${celsius}</td><td>${diff}</td><td>${diffsum10}</td><td>${ismove}</td><td>${light}</td><td>${hour}</td><td>${isair}</td><td>${ishuman}</td><td>${islight}</td><td>${tambontemp}</td><td>${used}</td><td>${percentused}</td>";
+              html+="</tr>";
+            }
+            html+="</table>";
+            //var transform = { "<>": "div", "html": "${id} | ${celsius} | ${diff} | ${diffsum10} | ${ismove} | ${light} | ${isair} | ${ishuman} | ${islight} | ${hour}| ${tambontemp} | ${used} | ${percentused}" };
+            //var html = json2html.transform(results, transform);
+            //html = "id | celsius | diff | diffsum10 | ismove | light | isair | ishuman | islight | hour | tambontemp | used | percentused<br/>" + html;
             res.send(html);
         }
     })
