@@ -76,7 +76,7 @@ async function doEachRows(rows) {
         /* check night time 19:00 - 5:00 */
         if ((hour >= 19 && hour <= 24) || (hour >= 0 && hour <= 5)) {
 
-            if (light == "light" || light == "bright" || light == "very bright" || light == "white" || light=="dim light") {
+            if (light == "light" || light == "bright" || light == "very bright" || light == "white" || light == "dim light") {
                 /* if night time and there is light that mean there is human */
                 islight = 1;
             } else {
@@ -137,7 +137,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
     var sql = "select  distinct TIMESTAMPDIFF(HOUR,b.createddate,j.createddate) hourdiff ,b.btemp ,j.* ";
     sql += " from job j  left outer join btemp b on b.deviceid=j.deviceid ";
     sql += " where j.deviceid=?  and j.diffsum10 is not null ";
-   // sql += " and  j.createddate >= NOW() - INTERVAL 10 MINUTE ";
+    // sql += " and  j.createddate >= NOW() - INTERVAL 10 MINUTE ";
     sql += " order by j.id desc limit 0,2 ";
 
     connection.query(sql, deviceid, function (err, results) {
@@ -145,12 +145,14 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
             console.log("ERROR Get10Minutes:" + err.message);
         } else {
             //get first
-            var sTemp, eTemp, diff, hourdiff, bTemp,diffsum10;
+            var sTemp, eTemp, diff, hourdiff, bTemp, diffsum10;
+            var dt1, dt2, minutes;
             if (results.length != 0) {
                 /* get last sum 10 minutes  */
-                diffsum10 = results[0].diffsum10;  
+                diffsum10 = results[0].diffsum10;
                 hourdiff = results[0].hourdiff;
                 bTemp = results[0].btemp;
+
                 console.log("id=" + id + " diffsum10=" + diffsum10 + " BTEMP=" + bTemp + " HOURDIFF=" + hourdiff + " TAMTEMP=" + outsideTemp + " DEVICE=" + deviceid);
                 if (diffsum10 <= -1) {
                     /* temp decrease more then -1 celsius -> isair=1 */
@@ -166,11 +168,24 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                     //get previous record
                     if (results.length >= 1) {
                         //get previous
-                        var previousIsAir=results[1].isair;  
+                        date = results[0].createddate;
+                        datePrevious = results[1].createddate;
+                        diff = temp - tempPrevious;
+                        dt1 = new Date(date);
+                        dt2 = new Date(datePrevious);
+                        /* get time diff between current and previous */
+                        minutes = Math.floor(Math.abs(dt1 - dt2) / 1000 / 60) % 60;
+
+                        var previousIsAir = results[1].isair;
+                        if (minutes >= 60) {
+                            //case previous record is more than 60 minutes
+                            previousIsAir=null;
+                            setIsAirByPrevious(id, previousIsAir);
+                            console.log("id="+id+" minutes>=60 then set previousIsAir=null");
+                        }
                         if (previousIsAir != null) {
                             //update isair=previousIsAir
-                            setIsAirByPrevious(id, previousIsAir);
-                            //console.log("id=" + id + " PREVIOUS = " + previousIsAir);
+                            setIsAirByPrevious(id, previousIsAir); 
                         } else {
                             console.log("id=" + id + " PREVIOUS is null");
                         }
@@ -178,7 +193,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
                         console.log("id=" + id + " results.length <1 (results.length=" + results.length + ")");
                     }
                 }
-            } else { 
+            } else {
                 console.log("id=" + id + " results.length=0");
             }
         }
@@ -186,9 +201,9 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
     })
     connection.end()
 }
- 
- 
-  
+
+
+
 /* set when isair=1 */
 async function setIsAir(id, isair, bTemp, deviceid) {
     var parameters1 = [isair, id];
