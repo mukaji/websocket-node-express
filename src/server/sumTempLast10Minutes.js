@@ -62,21 +62,15 @@ async function doEachDeviceId(deviceid) {
     });
     connection.connect()
 
-    var sql = "select * from job where diffsum10 is null and deviceid=? order by id desc; ";
+    var sql = "select * from job where diffsum10 is null and deviceid=? order by id desc limit 0,100; ";
     connection.query(sql, deviceid, function (err, results) {
         if (err) {
             console.log("ERROR doEachDeviceId:" + err.message);
         } else {
-            //doEachRows(results);
-            var index=0;
+            //doEachRows(results); 
             for (let i = 0; i < results.length; i++) {
                 // do each diffsum10=null
-                doEachNullDiffSum10(results[i].id, deviceid);
-                index++;
-                if(index>=100){
-                    index=0;
-                    await delay(3000);
-                }
+                doEachNullDiffSum10(results[i].id, deviceid); 
             }
         }
 
