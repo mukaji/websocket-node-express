@@ -115,10 +115,10 @@ async function doEachRows(mainid, rows) {
     for (let i = 0; i < rows.length; i++) { 
         id = rows[i].id;
          //sum 10 records previous
-        if (rows[i + j].diff != null) {
-            diffTotal += parseFloat(rows[i + j].diff);
+        if (rows[i].diff != null) {
+            diffTotal += parseFloat(rows[i].diff);
         }  
-        console.log("mainid="+mainid+" diff="+rows[i + j].dif);
+        console.log("mainid="+mainid+" diff="+rows[i].dif);
     }
     console.log("mainid=" + mainid + " diffTotal=" + diffTotal);
     updateDiffSum10DB(mainid, diffTotal); 
