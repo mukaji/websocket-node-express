@@ -93,6 +93,7 @@ async function doEachRows(rows) {
             if(i+j >= rows.length){
                 break;
             } 
+            console.log("XXX="+rows[i + j].diff);
             diffTotal += parseFloat(rows[i + j].diff); 
         }
  

@@ -148,7 +148,7 @@ async function analyticAir(id, celsius, outsideTemp, hour, deviceid) {
             var sTemp, eTemp, diff, hourdiff, bTemp,diffsum10;
             if (results.length != 0) {
                 /* get last sum 10 minutes  */
-                diffsum10 = results[0].diffsum10; 
+                diffsum10 = results[0].diffsum10;  
                 hourdiff = results[0].hourdiff;
                 bTemp = results[0].btemp;
                 console.log("id=" + id + " diffsum10=" + diffsum10 + " BTEMP=" + bTemp + " HOURDIFF=" + hourdiff + " TAMTEMP=" + outsideTemp + " DEVICE=" + deviceid);
