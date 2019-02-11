@@ -67,7 +67,11 @@ async function doEachDeviceId(deviceid) {
         if (err) {
             console.log("ERROR doEachDeviceId:" + err.message);
         } else {
-            doEachRows(results);
+            //doEachRows(results);
+            for (let i = 0; i < results.length; i++) {
+                // do each diffsum10=null
+                doEachNullDiffSum10(results[i].id, deviceid);
+            }
         }
 
     })
@@ -80,6 +84,30 @@ const delay = (amount = number) => {
     });
 }
 
+
+async function doEachNullDiffSum10(id, deviceid) {
+    var parameters = [id, deviceid];
+    var connection = mysql.createConnection({
+        host: dbhost,
+        user: dbuser,
+        password: dbpassword,
+        database: dbschema
+    });
+    connection.connect()
+
+    var sql = "select * from job where id=? and deviceid=? order by id desc limit 0,10; ";
+    connection.query(sql, parameters, function (err, results) {
+        if (err) {
+            console.log("ERROR doEachNullDiffSum10:" + err.message);
+        } else {
+            doEachRows(results);
+        }
+
+    })
+    connection.end()
+}
+
+
 async function doEachRows(rows) {
     var index = 0, diffTotal = 0;
     var id, celsius;
@@ -87,7 +115,7 @@ async function doEachRows(rows) {
         diffTotal = 0;
         id = rows[i].id;
         celsius = rows[i].celsius;
-
+        console.log("****");
         //get 10 records previous
         for (let j = 0; j < 10; j++) {
             if (i + j >= rows.length) {
@@ -96,8 +124,9 @@ async function doEachRows(rows) {
             if (rows[i + j].diff != null) {
                 diffTotal += parseFloat(rows[i + j].diff);
             }
+            console.log("id="+id+" diff="+rows[i + j].diff);
         }
-
+        console.log("id="+id+" diffTotal="+diffTotal);
         updateDiffSum10DB(id, diffTotal);
         if (index >= 100) {
             await delay(3000);
