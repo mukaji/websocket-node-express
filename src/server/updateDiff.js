@@ -99,7 +99,8 @@ async function doEachRows(rows) {
         minutes = Math.floor(Math.abs(dt1 - dt2) / 1000 / 60) % 60;
         if (minutes >= 10) { 
             /* each record diff more than 10 minute then set diff=0 */ 
-            updateTempDB(id, 0);
+            updateRowNotUpdateMoreThan10Minutes(id);
+             
         } else {
             /* update diff each record */  
             updateTempDB(id, diff);
@@ -127,6 +128,28 @@ function updateTempDB(id, diff) {
             console.log("ERROR updateTempDB:" + err.message);
         } else {
             console.log("UPDATE SUCCESS DIFFTEMP id=" + id + " diff=" + diff);
+        }
+    })
+    connection.end()
+}
+
+
+function updateRowNotUpdateMoreThan10Minutes(id) {
+     
+    var connection = mysql.createConnection({
+        host: dbhost,
+        user: dbuser,
+        password: dbpassword,
+        database: dbschema
+    });
+
+    connection.connect()
+    /* update diff temperature */
+    connection.query('update job set diff=0, diffsum10=0, isair=null  where id=?  ', id, function (err, rows, fields) {
+        if (err) {
+            console.log("ERROR updateRowNotUpdateMoreThan10Minutes:" + err.message);
+        } else {
+            console.log("UPDATE SUCCESS updateRowNotUpdateMoreThan10Minutes id=" + id );
         }
     })
     connection.end()
