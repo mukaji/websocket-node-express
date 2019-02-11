@@ -105,6 +105,7 @@ async function doEachRows(rows) {
             updateTempDB(id, 0);
         } else {
             /* update diff each record */ 
+            console.log("minutes="+minutes+ " diff="+diff+" temp="+temp+" tempPrevious="+tempPrevious);
             updateTempDB(id, diff);
         }
         index++;
