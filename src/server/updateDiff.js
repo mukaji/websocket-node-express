@@ -84,12 +84,7 @@ async function doEachRows(rows) {
     var dt1, dt2, minutes;
     for (let i = 0; i < rows.length; i++) {  
         id = rows[i].id; 
-        if (i >= rows.length-1) {
-            
-            //last record then update diff=0
-            updateTempDB(id,0);
-            break;
-        }
+        
         deviceid=rows[i].deviceid;
         date = rows[i].createddate;
         datePrevious = rows[i + 1].createddate;
@@ -129,7 +124,7 @@ function updateTempDB(id, diff) {
         if (err) {
             console.log("ERROR updateTempDB:" + err.message);
         } else {
-           // console.log("UPDATE SUCCESS DIFFTEMP id=" + id + " diff=" + diff);
+            console.log("UPDATE SUCCESS DIFFTEMP id=" + id + " diff=" + diff);
         }
     })
     connection.end()
