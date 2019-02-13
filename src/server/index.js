@@ -29,7 +29,7 @@ var dad = fs.readFileSync('gd_bundle-g2-g1.crt').toString();
 if (SERVER == "DEV") {
     app.listen(8080, () => startUp(8080));
 } else if (SERVER == "PROD") {
-    
+    console.log("PROD");
     https.createServer(function (req, res) {
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.write('Hello World!');
