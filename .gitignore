@@ -6,3 +6,4 @@ node_modules/
 .*.yml
 *-lock.json
 *.out
+config.json
