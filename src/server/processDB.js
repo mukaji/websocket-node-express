@@ -79,7 +79,8 @@ async function doEachDeviceId(deviceid) {
                 doEachRowDiffSum10(mainId, deviceid);
                 await delay(500);
                 /* update tambontemp */
-
+                doEachRowTambonTemp(mainId, deviceid);
+                
                 index++;
                 if (index >= 100) {
                     index = 0;
@@ -201,9 +202,9 @@ function doEachRowTambonTemp(mainId, deviceid) {
         } else {
             var temperature;
             if (results.length > 0) {
-                temperature=results[0].temperature;
+                temperature = results[0].temperature;
                 //update job.tambontemp
-                updateTambonTemp(mainId,temperature);
+                updateTambonTemp(mainId, temperature);
             }
         }
 
@@ -275,7 +276,7 @@ function updateTambonTemp(id, tambontemp) {
         if (err) {
             console.log("ERROR updateTambonTemp:" + err.message + "  tambontemp=" + tambontemp + " id=" + id);
         } else {
-            //console.log("UPDATE SUCCESS updateTambonTemp id=" + id + " tambontemp=" + tambontemp);
+            console.log("UPDATE SUCCESS updateTambonTemp id=" + id + " tambontemp=" + tambontemp);
         }
     })
     connection.end()
