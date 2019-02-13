@@ -4,5 +4,6 @@
       "dbuser": "hoteluser",
       "dbpassword": "1qaz2wsx",
       "dbschema": "hotel"
-    }
+    },
+    "SERVER": "DEV"
   }

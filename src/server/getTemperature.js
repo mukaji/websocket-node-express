@@ -108,10 +108,11 @@ function initialize(sUrl, id, tambon) {
         // Do async job
         request.get(options, function (err, resp, body) {
             if (err) {
-                console.log("ERROR GetAPI");
+                console.log("ERROR api.openweathermap.org:"+err.message);
                 reject(err);
             } else {
                 var outputs = [id, tambon, JSON.parse(body)];
+                console.log("SUCCESS api.openweathermap.org done");
                 resolve(outputs);
             }
         });

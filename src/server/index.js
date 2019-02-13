@@ -1,15 +1,11 @@
 const express = require('express');
-const app = express();
 
-let date = require('date-and-time');
 
-var updateDiff = require("./updateDiff");
 var temp = require("./getTemperature");
-var analytic = require("./analytic");
-var finalAnalytic = require("./finalAnalytic");
 var member = require('./member');
-
-var sumTemp = require("./sumTempLast10Minutes");
+var processDB = require("./processDB");
+var processAnalytic = require("./processAnalytic");
+var finalAnalytic=require("./finalAnalytic");
 
 /* db configuration */
 var mysql = require('mysql')
@@ -21,13 +17,47 @@ const dbhost = exports.storageConfig.mysql.dbhost;
 const dbuser = exports.storageConfig.mysql.dbuser;
 const dbpassword = exports.storageConfig.mysql.dbpassword;
 const dbschema = exports.storageConfig.mysql.dbschema;
+const SERVER= exports.storageConfig.SERVER;
 
-var json2html = require('node-json2html');
+
+const app = express();
+/* HTTPS */
+var privateKey = fs.readFileSync('nodict.key').toString();
+var certificate = fs.readFileSync('e0d6f70a38853bb3.crt').toString();
+var dad = fs.readFileSync('gd_bundle-g2-g1.crt').toString();
+//var app = express.createServer({key: privateKey, cert: certificate, ca: dad});
+//app.listen(443);
+//app.get('/', function(req, res){
+//   res.end('Hello SSL');
+//});
+
+if(SERVER=="DEV"){
+    app.listen(8080, () => startUp());
+}else if(SERVER=="PROD"){
+    app.listen(80, () => startUp());
+}
+
+
+
+function startUp() {
+    console.log("Listening on port 8080!");
+    /* start get temperature from open api */
+    temp.updateTemp();
+
+    //find diff & diffsum10
+    processDB.processDB();
+    //update ishuman, islight
+    processAnalytic.processAnalytic();
+    /* start final Analytic */
+    finalAnalytic.finalAnalytic();
+
+}
 
 app.use(express.static("dist"));
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+
 
 app.get('/', (req, res) => {
     res.send('');
@@ -164,47 +194,34 @@ app.post('/hotel-monitor', function (req, res) {
 });
 
 /* signup */
-app.post('/signup', function (req, res) { 
+app.post('/signup', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
     if (validateEmail(email)) {
         member.memberSignUp(email, password, res);
-    }else{
+    } else {
         res.send("ERROR:Invalid email address");
     }
 });
 
 /* login */
-app.post('/login', function (req, res) { 
+app.post('/login', function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
     if (validateEmail(email)) {
         member.memberLogin(email, password, res);
-    }else{
+    } else {
         res.send("ERROR:Invalid email address");
     }
 });
 
-app.listen(8080, () => startUp());
+
 
 function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
 
-function startUp() {
-    console.log("Listening on port 8080!");
-    /* start get temperature from open api */
-    temp.updateTemp();
-    /* start analytic room usage */
-    analytic.analyticJob();
-    /* start final Analytic */
-    finalAnalytic.finalAnalytic();
-    /* update diff between current temp and previous temp */
-    updateDiff.updateDiff();
-    /* update diff temperature last 10 minutes */
-    sumTemp.sumTemp();
-}
 
 /* FUNCTION */
 
