@@ -24,8 +24,8 @@ const app = express();
 /* HTTPS */
 var https = require('https');
 var key = fs.readFileSync('encryption/nodict.key');
-var ca = fs.readFileSync('encryption/e0d6f70a38853bb3.crt');
-var cert = fs.readFileSync('encryption/gd_bundle-g2-g1.crt');
+var cert = fs.readFileSync('encryption/e0d6f70a38853bb3.crt');
+var ca  = fs.readFileSync('encryption/gd_bundle-g2-g1.crt');
 
 
 if (SERVER == "DEV") {
