@@ -37,8 +37,9 @@ if (SERVER == "DEV") {
         cert: cert,
         ca: ca
     };
-    https.createServer(options, app).listen(443);
-    startUp(443)
+    //https.createServer(options, app).listen(443);
+    //startUp(443)
+    app.listen(80, () => startUp(80));
 }
 
 
