@@ -18,25 +18,27 @@ const dbuser = exports.storageConfig.mysql.dbuser;
 const dbpassword = exports.storageConfig.mysql.dbpassword;
 const dbschema = exports.storageConfig.mysql.dbschema;
 const SERVER = exports.storageConfig.SERVER;
-var https = require('https');
+
 
 const app = express();
 /* HTTPS */
-var privateKey = fs.readFileSync('nodict.key').toString();
-var certificate = fs.readFileSync('e0d6f70a38853bb3.crt').toString();
-var dad = fs.readFileSync('gd_bundle-g2-g1.crt').toString();
+var https = require('https');
+var key = fs.readFileSync('encryption/nodict.key');
+var cert = fs.readFileSync('encryption/e0d6f70a38853bb3.crt');
+var ca = fs.readFileSync('encryption/gd_bundle-g2-g1.crt');
+
 
 if (SERVER == "DEV") {
     app.listen(8080, () => startUp(8080));
 } else if (SERVER == "PROD") {
     console.log("PROD");
-    https.createServer(function (req, res) {
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.write('Hello World!');
-        res.end();
-      }).listen(8080);
-      
-
+    var options = {
+        key: key,
+        cert: cert,
+        ca: ca
+    };
+    https.createServer(options, app).listen(443);
+    startUp(443)
 }
 
 
