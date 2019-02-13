@@ -8,7 +8,7 @@ const dbhost = exports.storageConfig.mysql.dbhost;
 const dbuser = exports.storageConfig.mysql.dbuser;
 const dbpassword = exports.storageConfig.mysql.dbpassword;
 const dbschema = exports.storageConfig.mysql.dbschema;
- 
+
 
 module.exports = {
     processDB: function () {
@@ -77,7 +77,9 @@ async function doEachDeviceId(deviceid) {
                 await delay(500);
                 /* do diffsum10 temp */
                 doEachRowDiffSum10(mainId, deviceid);
-               
+                await delay(500);
+                /* update tambontemp */
+
                 index++;
                 if (index >= 100) {
                     index = 0;
@@ -134,7 +136,7 @@ function doEachRowDiff(mainId, mainCelsius, deviceid) {
     })
     connection.end()
 }
- 
+
 /* find temp diff between current row and 10 previous rows */
 function doEachRowDiffSum10(mainId, deviceid) {
 
@@ -162,7 +164,7 @@ function doEachRowDiffSum10(mainId, deviceid) {
                 diff = results[i].diff;
                 if (diff == null) {
                     diff = 0;
-                     console.log("id=" + id + " null");
+                    console.log("id=" + id + " null");
                 }
                 totalDiff += diff;
                 //console.log("mainId=" + mainId + " id=" + id + " diff=" + diff + " totalDiff=" + totalDiff);
@@ -176,7 +178,38 @@ function doEachRowDiffSum10(mainId, deviceid) {
     })
     connection.end()
 }
- 
+
+function doEachRowTambonTemp(mainId, deviceid) {
+    var parameters = [deviceid, mainId];
+    var celsius, diff;
+
+    /* Get Previous 10 Records */
+    var connection = mysql.createConnection({
+        host: dbhost,
+        user: dbuser,
+        password: dbpassword,
+        database: dbschema
+    });
+    connection.connect()
+    /*  get records that not process yet */
+    var sql = "select distinct t.temperature ";
+    sql += " from tambon t inner join device d on d.tambonid=t.id ";
+    sql += " where d.id=? ";
+    connection.query(sql, deviceid, function (err, results) {
+        if (err) {
+            console.log("ERROR doEachRowTambonTemp:" + err.message);
+        } else {
+            var temperature;
+            if (results.length > 0) {
+                temperature=results[0].temperature;
+                //update job.tambontemp
+                updateTambonTemp(mainId,temperature);
+            }
+        }
+
+    })
+    connection.end()
+}
 
 /* update diffsum10 */
 function updateDiffSum10(id, diffsum10) {
@@ -224,3 +257,26 @@ function updateDiff(id, diff) {
     connection.end()
 }
 
+
+
+function updateTambonTemp(id, tambontemp) {
+    var parameters = [tambontemp, id];
+
+    var connection = mysql.createConnection({
+        host: dbhost,
+        user: dbuser,
+        password: dbpassword,
+        database: dbschema
+    });
+
+    connection.connect()
+    /* update isair=previous isair */
+    connection.query('update job set tambontemp=? where id=?  ', parameters, function (err, rows, fields) {
+        if (err) {
+            console.log("ERROR updateTambonTemp:" + err.message + "  tambontemp=" + tambontemp + " id=" + id);
+        } else {
+            //console.log("UPDATE SUCCESS updateTambonTemp id=" + id + " tambontemp=" + tambontemp);
+        }
+    })
+    connection.end()
+}

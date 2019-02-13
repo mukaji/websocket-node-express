@@ -38,7 +38,7 @@ async function mainProcessAnalytic() {
                         //do human,light
                         doEachDeviceIdHumanLight(deviceid);
                         //do air
-                        doEachDeviceIdAir(deviceid);
+                        doEachDeviceIdAir(deviceid); 
                     }
                 }
             })
