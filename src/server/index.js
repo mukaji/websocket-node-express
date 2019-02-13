@@ -18,7 +18,7 @@ const dbuser = exports.storageConfig.mysql.dbuser;
 const dbpassword = exports.storageConfig.mysql.dbpassword;
 const dbschema = exports.storageConfig.mysql.dbschema;
 const SERVER = exports.storageConfig.SERVER;
-
+var https = require('https');
 
 const app = express();
 /* HTTPS */
@@ -29,12 +29,13 @@ var dad = fs.readFileSync('gd_bundle-g2-g1.crt').toString();
 if (SERVER == "DEV") {
     app.listen(8080, () => startUp(8080));
 } else if (SERVER == "PROD") {
-    app.listen(80, () => startUp(80));
-    //var app = express.createServer({key: privateKey, cert: certificate, ca: dad});
-    app.listen(443);
-    app.get('/', function (req, res) {
-        res.end('Hello SSL');
-    });
+    
+    https.createServer(function (req, res) {
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.write('Hello World!');
+        res.end();
+      }).listen(8080);
+      
 
 }
 
