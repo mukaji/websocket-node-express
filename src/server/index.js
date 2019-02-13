@@ -5,7 +5,7 @@ var temp = require("./getTemperature");
 var member = require('./member');
 var processDB = require("./processDB");
 var processAnalytic = require("./processAnalytic");
-var finalAnalytic=require("./finalAnalytic");
+var finalAnalytic = require("./finalAnalytic");
 
 /* db configuration */
 var mysql = require('mysql')
@@ -17,7 +17,7 @@ const dbhost = exports.storageConfig.mysql.dbhost;
 const dbuser = exports.storageConfig.mysql.dbuser;
 const dbpassword = exports.storageConfig.mysql.dbpassword;
 const dbschema = exports.storageConfig.mysql.dbschema;
-const SERVER= exports.storageConfig.SERVER;
+const SERVER = exports.storageConfig.SERVER;
 
 
 const app = express();
@@ -25,22 +25,23 @@ const app = express();
 var privateKey = fs.readFileSync('nodict.key').toString();
 var certificate = fs.readFileSync('e0d6f70a38853bb3.crt').toString();
 var dad = fs.readFileSync('gd_bundle-g2-g1.crt').toString();
-//var app = express.createServer({key: privateKey, cert: certificate, ca: dad});
-//app.listen(443);
-//app.get('/', function(req, res){
-//   res.end('Hello SSL');
-//});
 
-if(SERVER=="DEV"){
-    app.listen(8080, () => startUp());
-}else if(SERVER=="PROD"){
-    app.listen(80, () => startUp());
+if (SERVER == "DEV") {
+    app.listen(8080, () => startUp(8080));
+} else if (SERVER == "PROD") {
+    app.listen(80, () => startUp(80));
+    //var app = express.createServer({key: privateKey, cert: certificate, ca: dad});
+    app.listen(443);
+    app.get('/', function (req, res) {
+        res.end('Hello SSL');
+    });
+
 }
 
 
 
-function startUp() {
-    console.log("Listening on port 8080!");
+function startUp(port) {
+    console.log("Listening on port " + port + "!");
     /* start get temperature from open api */
     temp.updateTemp();
 
